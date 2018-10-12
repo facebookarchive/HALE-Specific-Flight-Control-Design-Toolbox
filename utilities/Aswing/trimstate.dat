@@ -1,0 +1,4 @@
+# Aquila 2                                                                        
+# Operating point sequence...
+# i     t     dUx Lacc[ 1]  dUy Lacc[ 1]  dUz Lacc[ 1]  UX vel[ 1]    UY vel[ 1]    UZ vel[ 1]    Wx rate[ 1]   Wy rate[ 1]   Wz rate[ 1]   RX pos[ 1]    RY pos[ 1]    RZ pos[ 1]    Phi[ 1]       Theta[ 1]     Psi[ 1]       V[ 1]         beta[ 1]      alpha[ 1]    
+  1  1.000      0.735544      0.123741E-04   9.78239      -9.00000       0.00000     -0.596046E-07   0.00000       0.00000       0.00000       2.15982      0.826074E-06  0.363594      0.264194E-03  -4.30002     -0.255220E-05   8.95308     -0.254601E-04  -5.45125    

@@ -1,0 +1,82 @@
+load asw_file_name
+pget
+point_file_name
+
+oper
+!V eas 
+A altitude 9.81
+X
+R
+%
+F
+19 19
+20 20
+21 21
+22 22
+
+E
+peng_value
+F
+1 flap1_value
+2 flap2_value
+3 flap3_value
+
+.
+X
+0.1 200
+P
+S
+19 20 21 39 76 77 78 79 80 81
+
+1 0
+2 0
+3 0
+7 0
+8 0
+9 0 
+10 0
+11 0
+12 0
+13 0
+14 0
+15 0
+16 0
+17 0
+18 0
+19 0
+20 0
+21 0
+
+W timefilename1
+
+X
+0.1 200
+P
+W timefilename2
+
+X
+0.1 200
+P
+W timefilename3
+
+X
+0.1 200
+P
+W timefilename4
+
+X
+0.1 200
+P
+W timefilename5
+
+X
+0.1 200
+P
+W timefilename6
+
+
+
+
+
+Q
+

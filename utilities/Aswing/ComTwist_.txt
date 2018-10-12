@@ -1,0 +1,51 @@
+load AQ3mod.asw
+pget
+SLF.pnt
+
+oper
+!V 9 
+A 0 9.81
+X
+P
+S
+19 20 21 39
+
+17 0
+
+W trimstatetwist.dat
+O
+
+R
+%
+F
+19 19
+20 20
+21 21
+22 22
+
+
+mode
+E
+19 20 21 39
+
+
+N
+60
+
+W
+AQ3twist.e00
+
+
+
+mode
+G
+0
+
+AQ3twist.rom
+
+
+
+
+
+Q
+

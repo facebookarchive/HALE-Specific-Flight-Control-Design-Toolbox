@@ -1,0 +1,82 @@
+load AQ3mod.asw
+pget
+SLF.pnt
+
+oper
+!V 10.5 
+A 0 9.81
+X
+R
+%
+F
+19 19
+20 20
+21 21
+22 22
+
+E
+28.1773
+F
+1 -0.00044095
+2 2.7344
+3 -0.01009
+
+.
+X
+0.1 200
+P
+S
+19 20 21 39 76 77 78 79 80 81
+
+1 0
+2 0
+3 0
+7 0
+8 0
+9 0 
+10 0
+11 0
+12 0
+13 0
+14 0
+15 0
+16 0
+17 0
+18 0
+19 0
+20 0
+21 0
+
+W AQ3flap3down1.dat
+
+X
+0.1 200
+P
+W AQ3flap3down2.dat
+
+X
+0.1 200
+P
+W AQ3flap3down3.dat
+
+X
+0.1 200
+P
+W AQ3flap3down4.dat
+
+X
+0.1 200
+P
+W AQ3flap3down5.dat
+
+X
+0.1 200
+P
+W AQ3flap3down6.dat
+
+
+
+
+
+Q
+

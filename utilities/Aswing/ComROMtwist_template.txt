@@ -1,0 +1,51 @@
+load asw_file_name
+pget
+point_file_name
+
+oper
+!V eas 
+A altitude 9.81
+X
+P
+S
+19 20 21 39
+
+17 0
+
+W trimstatetwist.dat
+O
+
+R
+%
+F
+19 19
+20 20
+21 21
+22 22
+
+
+mode
+E
+19 20 21 39
+
+
+N
+num_modes
+
+W
+AQ3twist.e00
+
+
+
+mode
+G
+0
+
+AQ3twist.rom
+
+
+
+
+
+Q
+
