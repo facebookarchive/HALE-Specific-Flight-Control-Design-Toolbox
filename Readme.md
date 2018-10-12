@@ -1,5 +1,5 @@
 # General
-FBHALEControl toolbox was developed by Facebook to assist in flight control laws design for High Altitude Long Endurance (HALE) airplanes.
+HALE-Specific-Flight-Control-Design-Toolbox was developed by Facebook to assist in flight control system design for solar powered unmanned High Altitude Long Endurance (HALE) airplanes.
 
 ## Project Overview
 The HALE flight control laws design toolbox was developed to assist HALE aircraft's autopilot system designers in designing the control and measurement system architecture and in tuning the longitudinal and lateral/directional gains and parameters of the control laws such that some stability, performance and robustness criteria are satisfied. the tool consists of the following three modules:
@@ -19,18 +19,18 @@ This project was developed under Matlab/Simulink version 2017A.  It requires the
 * Control Systems Toolbox
 * Simulink
 * Parallel Computing Toolbox (optional): Optimization can be very slow, so it is beneficial to install and run on a server with many cores, taking advantage of parallelization
-* aircraft state space model in the toolbox prescribed format (from ASWING or any other modeling toolboxes)
+* Aircraft state space model in the toolbox prescribed format (from ASWING or any other modeling tools)
 
 ## Description
-- A comprehensive description of the toolbox and its functionality is given in the Quip document: https://fb.quip.com/tRaTAGKPYNgg
+- A comprehensive description of the toolbox and its functionality is given in the included HALE Specific Flight Control Laws Design Toolbox Manual.html toolbox manual
 -
 
 ## Examples
 - Set the UseCustomModel flag to 1 and follow the steps to design the preliminary flight control laws for an HALE aircraft (ASWING model)  
 
-## Join the FBHALEControl community
+## Join the HALE-Specific-Flight-Control-Design-Toolbox community
 See the CONTRIBUTING file for how to help out.
 
 ## License
-By contributing to FBHALEControl, you agree that your contributions will be licensed
+By contributing to HALE-Specific-Flight-Control-Design-Toolbox, you agree that your contributions will be licensed
 under the LICENSE or COPYING file in the root directory of this source tree.

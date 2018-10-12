@@ -1,0 +1,1654 @@
+<!doctype html>
+<html><head><title>HALE Specific Flight Control Laws Design Toolbox Manual</title><meta charset="UTF-8"><link href="http://fonts.googleapis.com/css?family=Crimson+Text:400,400italic,700,700italic|Roboto:400,700,700italic,400italic" rel="stylesheet" type="text/css"><style>/*
+ * Copyright 2014 Quip
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+body {
+    font-size: 15px;
+    color: #333;
+    background: #fff;
+    padding: 60px 95px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern";
+    font-kerning: normal;
+    -moz-font-feature-settings: "kern";
+    -webkit-font-feature-settings: "kern";
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+th {
+    font-family: Roboto, sans-serif;
+    font-weight: 700;
+    margin: 0;
+    margin-top: 1.25em;
+    margin-bottom: 0.75em;
+}
+
+h1 {
+    font-size: 35px;
+    line-height: 42px;
+}
+
+h1:first-child {
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 18px;
+    line-height: 22px;
+}
+
+h3 {
+    text-transform: uppercase;
+    font-size: 13px;
+    line-height: 16px;
+}
+
+/* Body text */
+body,
+p,
+ul,
+ol,
+td {
+    font-family: "Crimson Text", serif;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+blockquote,
+q {
+    display: block;
+    margin: 1em 0;
+    font-style: italic;
+}
+
+blockquote a,
+q a {
+    text-decoration: underline;
+}
+
+blockquote {
+    padding-left: 10px;
+    border-left: 4px solid #a6a6a6;
+}
+
+q {
+    color: #a6a6a6;
+    line-height: 40px;
+    font-size: 24px;
+    text-align: center;
+    quotes: none;
+}
+
+q a {
+    color: #a6a6a6;
+}
+
+code,
+pre {
+    font-family: Consolas, "Liberation Mono", Menlo, "Courier Prime Web",
+        Courier, monospace;
+    background: #f3f3f3;
+}
+
+code {
+    padding: 1px;
+    margin: 0 -1px;
+    border-radius: 3px;
+}
+
+pre {
+    display: block;
+    line-height: 20px;
+    text-shadow: 0 1px white;
+    padding: 5px 5px 5px 30px;
+    white-space: nowrap;
+    position: relative;
+    margin: 1em 0;
+}
+
+pre:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 15px;
+    border-left: solid 1px #dadada;
+}
+
+/* Lists */
+div[data-section-style="5"],
+div[data-section-style="6"],
+div[data-section-style="7"] {
+    margin: 12px 0;
+}
+
+ul {
+    padding: 0 0 0 40px;
+}
+
+ul li {
+    margin-bottom: 0.4em;
+}
+
+/* Bulleted list */
+div[data-section-style="5"] ul {
+    list-style-type: disc;
+}
+div[data-section-style="5"] ul ul {
+    list-style-type: circle;
+}
+div[data-section-style="5"] ul ul ul {
+    list-style-type: square;
+}
+div[data-section-style="5"] ul ul ul ul {
+    list-style-type: disc;
+}
+div[data-section-style="5"] ul ul ul ul ul {
+    list-style-type: circle;
+}
+div[data-section-style="5"] ul ul ul ul ul ul {
+    list-style-type: square;
+}
+
+/* Numbered list */
+div[data-section-style="6"] ul {
+    list-style-type: decimal;
+}
+div[data-section-style="6"] ul ul {
+    list-style-type: lower-alpha;
+}
+div[data-section-style="6"] ul ul ul {
+    list-style-type: lower-roman;
+}
+div[data-section-style="6"] ul ul ul ul {
+    list-style-type: decimal;
+}
+div[data-section-style="6"] ul ul ul ul ul {
+    list-style-type: lower-alpha;
+}
+div[data-section-style="6"] ul ul ul ul ul ul {
+    list-style-type: lower-roman;
+}
+
+/* Checklist */
+div[data-section-style="7"] ul {
+    list-style-type: none;
+}
+
+div[data-section-style="7"] ul li:before {
+    content: "\2610";
+    position: absolute;
+    display: inline;
+    margin-right: 1.2em;
+    margin-left: -1.2em;
+}
+
+div[data-section-style="7"] ul li.parent:before {
+    content: "";
+}
+
+div[data-section-style="7"] ul li.parent {
+    font-weight: bold;
+}
+
+div[data-section-style="7"] ul li.checked {
+    text-decoration: line-through;
+}
+
+div[data-section-style="7"] ul li.checked:before {
+    content: "\2611";
+    text-decoration: none;
+}
+
+/* Tables */
+div[data-section-style="8"] {
+    margin: 12px 0;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: separate;
+    border: solid 1px #bbb;
+    table-layout: fixed;
+    position: relative;
+}
+
+table th,
+table td {
+    padding: 2px 2px 0;
+    min-width: 1.5em;
+    word-wrap: break-word;
+}
+
+table th {
+    border-bottom: 1px solid #e1e1e1;
+    background: #f4f4f4;
+    font-weight: bold;
+    vertical-align: bottom;
+    color: #3a4449;
+    text-align: center;
+}
+
+table td {
+    padding-top: 0;
+    border-left: 1px solid #e1e1e1;
+    border-top: 1px solid #e1e1e1;
+    vertical-align: top;
+}
+
+table td.bold {
+    font-weight: bold;
+}
+
+table td.italic {
+    font-style: italic;
+}
+
+table td.underline {
+    text-decoration: underline;
+}
+
+table td.strikethrough {
+    text-decoration: line-through;
+}
+
+table td.underline.strikethrough {
+    text-decoration: underline line-through;
+}
+
+table td:first-child {
+    border-left: hidden;
+}
+
+table tr:first-child td {
+    border-top: hidden;
+}
+
+/* Images */
+div[data-section-style="11"] {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div[data-section-style="11"][data-section-float="0"] {
+    clear: both;
+    text-align: center;
+}
+
+div[data-section-style="11"][data-section-float="1"] {
+    float: left;
+    clear: left;
+    margin-right: 20px;
+}
+
+div[data-section-style="11"][data-section-float="2"] {
+    float: right;
+    clear: right;
+    margin-left: 20px;
+}
+
+div[data-section-style="11"] img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+}
+
+hr {
+    width: 70px;
+    margin: 20px auto;
+}
+
+/* Apps */
+div[data-section-style="19"].placeholder {
+    margin: 0.8em auto;
+    padding: 4px 0;
+    display: block;
+    color: #29b6f2;
+    text-align: center;
+    border: 1px solid rgba(41, 182, 242, 0.2);
+    border-radius: 3px;
+    background: #e9f8fe;
+    font-family: Roboto, sans-serif;
+}
+
+div[data-section-style="19"].first-party-element {
+    margin-bottom: 10px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+div[data-section-style="19"].first-party-element.kanban {
+    background-image: url("https://quip-cdn.com/nK0hSyhsb4jrLIL2s5Ma-g");
+    height: 166px;
+}
+
+div[data-section-style="19"].first-party-element.calendar {
+    background-image: url("https://quip-cdn.com/OYujqLny03RILxcLIiyERg");
+    height: 244px;
+}
+
+div[data-section-style="19"].first-party-element.poll {
+    background-image: url("https://quip-cdn.com/fbIiFrcKGv__4NB7CBfxoA");
+    height: 116px;
+}
+
+div[data-section-style="19"].first-party-element.countdown {
+    background-image: url("https://quip-cdn.com/3bPhykD2dBei9sSjCWteTQ");
+    height: 96px;
+}
+
+div[data-section-style="19"].first-party-element.process_bar {
+    background-image: url("https://quip-cdn.com/ybQlHnHEIIBLog5rZmYs_w");
+    height: 36px;
+}
+
+div[data-section-style="19"].first-party-element.project_tracker {
+    background-image: url("https://quip-cdn.com/OFQU087b4Mxzz1ZaHwtjXA");
+    height: 164px;
+}
+
+div[data-section-style="19"] img {
+    margin: 0.5em;
+}
+
+div[data-section-style="19"] img.masked-image {
+    margin: 0;
+    transform-origin: top left;
+}
+
+div[data-section-style="19"] .image-mask {
+    position: relative;
+    overflow: hidden;
+}
+</style></head><body><h1 id='JfRACALLRdN'>HALE Specific Flight Control Laws Design Toolbox Manual</h1>
+
+<h3 id='JfRACA1lwzr'>H. Bolandhemmat, A. Martin, D. Flamholz</h3>
+
+<br/>
+
+The control laws design toolbox was developed to assist HALE aircraft's autopilot system designers in designing the control and measurement system architecture and in tuning the longitudinal and lateral/directional gains and parameters of the control laws such that some stability, performance and robustness criteria are satisfied. the tool consists of the following three modules:<br/>
+
+<div data-section-style='6'><ul id='JfRACAVbp98'><li id='JfRACAcPsMB' class='' value='1'>Module 1 is to build and prepare the aircraft model and to save it into a *.mat file for further analysis - the main script to run is “getAquilaModel_ModelGeneration.m”. The script will then generate a .mat file containing the aircraft model information which serves as input to the Module 2 script (see below). The .mat file name must also be provided for the Module 3 in the “OptConfigSetup.m” script.
+
+<br/></li><li id='JfRACACWXRN' class=''>Module 2 is for open loop flight dynamic analysis, stability and sensitivity analysis over the speed and altitude nominal range, sensor/servo location determination and for preliminary control laws structure determination (especially for the problematic flexible modes at higher altitudes) - the main script to run is “AquilaFltDynAnalysis.m”.  
+
+<br/></li><li id='JfRACAKb4Ua' class=''>Module 3 is for control laws gain and parameters tuning over the designated flight envelop - the main script to run is “OptimiseAquilaClaws_Main.m”.
+
+<br/></li></ul></div><div data-section-style='19'><div class='image-mask' style='width:800px; height:313px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/KPHSx0liu-QqZQwDkXW4xw?a=KqwBxXa8Zie7HCN9eemTD9eHmkWlRdPmoTLlwbaWvO8a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAt9lj6' alt='' width='800' height='313' class='masked-image'></img></div></div><br/>
+
+<h1 id='JfRACAZbD5q'>Module 1: Building and Preparing the Aircraft Model</h1>
+
+Module 1 is to build and prepare the aircraft model and to save it into a *.mat file for further analysis - the main script to run is “getAquilaModel_ModelGeneration.m”. the output airplane data should at least include input-output port names. For further analysis in Module 2, additional details of the aircraft model will be required including possible sensors node locations across the aircraft body/wing and the model states.  There are various options to develop an airplane model; despite the modeling tool used, the control toolbox will require the state space realization matrices (A, B, C and D). The following section describes how to extract the airplane model matrices from ASWING tool environment.<br/>
+
+<h3 id='JfRACAT8vos'>ASWING Model Import</h3>
+
+Module 1 can also be used to import an aircraft model from ASWING.  There are two options for importing the model.  The first is to create a reduced order model (ROM) within ASWING, export the ROM, and then import it into Matlab.  The second option is to use system identification to estimate a state space model using frequency response data exported by ASWING.   Both options require that the ASWING executable for your system be included in the /utilties/Aswing folder.  For compilation instructions see <control data-remapped="true" id="JfRACAl9pCZ"><a href="https://quip.com/tRaTAGKPYNgg#JfRACAcGXaC">ASWING Source Modification And Compilation (Optional)</a></control>.<br/>
+
+<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:335px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/g1gvKEsmmGDRTr_BMaBueQ?a=adY6m5a7obsYOzaLlk431HiPQ1wj9gj7GrrsJx1ezmMa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAbkhzM' alt='' width='800' height='334' class='masked-image'></img></div></div><br/>
+
+<br/>
+
+To import an Aswing model, run getAquilaModel_ModelGeneration.m with the following options.  UseCustomModel flag set to 1.  <br/>
+
+<div data-section-style='5'><ul id='JfRACAcXxj0'><li id='JfRACAUMvY3' class='' value='1'>UseCustomModel = 1
+
+<br/></li><li id='JfRACAMySlR' class=''>customModelName = 'model_name'
+
+<br/></li></ul></div>To import a model using the ROM transfer method, set the useSysID flag to false.  To plot reports of the input output channel matches use the debugRom flag to true.  For more information about the transformations involved in the ROM transfer, see <control data-remapped="true" id="JfRACARWjhU"><a href="https://quip.com/tRaTAGKPYNgg#JfRACARx8zj">Appendix B: Complex State Space Conversion</a></control> and <control data-remapped="true" id="JfRACAQ07TQ"><a href="https://quip.com/tRaTAGKPYNgg#JfRACAToQQC">Appendix C: ASWING Model Transformation</a></control>.  The matching system should be quite good.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:650px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/OjHoRiQhU-3qFKYGPOhmjA?a=jVWs3DCeBmiMoqNj4MG0iU5jOg9u1PSnR6gAIrKhkIIa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAn5g9O' alt='' width='800' height='649' class='masked-image'></img></div></div><br/>
+
+<br/>
+
+To import a model using the system identification method, set the useSysID flag to true.  This will export bode data from Aswing, and then use n4sid in Matlab to estimate a state space model.  The option runSysIDReport can be set to 1 to produce additional information and plots regarding the quality of the system identification, including frequency domain comparison for all inputs and outputs, and pole/zero matching and plots.<br/>
+
+<br/>
+
+By default, ASWING is limited to 60 modes, and 120 exported frequencies.  For more information about compiling ASWING to enable exporting additional modes and frequency data from ASWING, see <control data-remapped="true" id="JfRACAQQndd"><a href="https://quip.com/tRaTAGKPYNgg#JfRACAZUTlL">Appendix A: ASWING Frequency Response Data Generation</a></control>.   The resulting frequency txt data file should be placed in the CustomModels/FrequencyData/ folder, along with the .e00 file containing the eigenvalues.  For the chosen model name, the files should be named model_name.txt and model_name.e00.<br/>
+
+<br/>
+
+Using either method, the resulting state space model will be saved under CustomModels/StateSpace/.  <br/>
+
+<br/>
+
+Once the model is created, proceed to Module 2 for the open loop analysis and Module 3 for the control laws design.<br/>
+
+<br/>
+
+More detailed analysis of the model transfer at different flight conditions is available under /utilities/Aswing/flightConditions.  The script analyzeFlightConditions takes a list of airspeeds, and then runs step tests for all inputs at each airspeed.  Step tests run for 120 seconds.  Frequency data is also generated.  The outputs are saved under ./data.<br/>
+
+<br/>
+
+This data can then be analyzed using the plotFlightConditions.m script.  This script loads and plots the bode data and step tests for each input to output, as well as system poles for the original and imported systems.  The plots are written into plots.pdf for later viewing.  <br/>
+
+<h1 id='JfRACAvhcCW'>Module 2: Tools/Methods for Analyzing the Aircraft Open Loop and Closed Loop Model</h1>
+
+Module 2 is for open loop flight dynamic analysis, stability and sensitivity analysis over the speed and altitude nominal range, sensor/servo location determination and for preliminary control laws structure determination (especially for the problematic flexible modes at higher altitudes) - the main script to run is “AquilaFltDynAnalysis.m”. The goal is to provide an additional tool(s) for analyzing the (Aquila) airplane flight dynamics model. The script is developed for the purpose of detailed analysis of the aircraft open loop dynamics. Note that the aircraft model input-output interconnection through the states must be known to take advantage of all of the features of this module.  With the black-box type models such as those from ASWING in which only the input-output relationship is known, some of the features such as modal analysis cannot be necessarily performed in this tool. However, they can be still done within the ASWING environment, and the results could be used throughout the design steps of this toolbox.<br/>
+
+<br/>
+
+The user will require determining the following settings to carry out the analyses of this module:<br/>
+
+<div data-section-style='6'><ul id='JfRACAwY5bV'><li id='JfRACAFFSXB' class='' value='1'>Define the address of the airplane model folder: Set the right data path to the (Aquila) model folder (at line 34 of the script).
+
+<br/></li><li id='JfRACAbkKb9' class=''>The flight condition at which the linearized data are generated and saved (into Aquila_OL_Model.mat file along with the aircraft configuration, flight condition itself, node indices, airplane mode shapes): Set the desired flight condition at line 44-49 (from the available choices).
+
+<br/></li><li id='JfRACAwEgwa' class=''>Analysis flag settings based on the analysis step and need (will be set into a GUI dashboard):
+
+<br/></li></ul></div><pre id='JfRACA4lWOk'>%Dashboard (future GUI) - Set the analysis flags and switches:<br>askForASEmodel                 = true ;        % set to true: to ask the user in every call of the script to provide the aircraft ASE model name (must be a *.mat file stored in the workspace)<br>printAirplaneConfigurationInfo = false ;       % set to true: to print out the Aquila airplane configuration and geometric information <br>plotModes                      = false ;       % set to true: to identify contributing modes to individual eigenvalues and print them in a s-plane plot<br>plotUnstableModes              = false ;       % set to true: to plot the unstable modes across the flight envelope (see also printFlutterOnlyBoundry)  <br>printFlutterOnlyBoundry        = false ;       % set to true (only active if printUnstableModes flag set to true) : to plot flutter only instability boundry , false: to include rigid body modes instability boundries as well - <br>plotSpdAltLoci                 = false ;       % set to true: to plot the locus of the modes with speed, altitude, bank attitude and flight path angle variations<br>saveACModels                   = true ;        % set to true: to save the ASE model with output measurements at the IMU location and/or the offcenter nodes<br>perfomCtrbObsvAnalysis         = false ;       % set to true: to perform "Modal" controllability/observability and Impulse residue analysis for selected modes <br>plotTransferFunctions          = false ;       % set to true: to plot the open loop transfer functions for the selected input-output pairs<br>plotGustResponses              = false ;       % set to true: to plot the open loop transfer functions from vertical gust to angular velocity and accelerations at various sensor locations <br>useSISOtool                    = true ;        % set to true: to deploy the siso design tool<br><br></pre>
+
+<div data-section-style='6'><ul id='JfRACA8Ivoj'><ul><li id='JfRACAyz8XG' class='' value='1'><code>askForASEmodel:</code> to ask the user in every call of the script to provide the aircraft ASE model name (must be a *.mat file stored in the workspace) - If the built model configuration is fixed - then set this flag to false and provide the model name in the “Aircraft_model_name” field not to have the script asks for the airplane model name in every call.
+
+<br/></li><li id='JfRACABeBhP' class=''><code>printAirplaneConfigurationInfo:</code> to print out the Aquila airplane configuration and geometric information including mass, inertias, wingspan, trim conditions, placement of sensors and servos, etc
+
+<br/></li><li id='JfRACADC3H8' class=''><code>plotModes: </code>to identify contributing modes to individual eigenvalues and print them in a s-plane plot
+
+<br/></li><li id='JfRACAiN3ND' class=''><code>plotUnstableModes:</code> The script generates the aircraft stability characteristics across the flight envelope to find the aircraft model (trim) data set which is closest to the airplane characteristics prior to the body freedom flutter at a given altitude - to plot the unstable modes across the flight envelope set this flag to true (see also printFlutterOnlyBoundry).
+
+<br/></li><li id='JfRACAMzmXh' class=''><code>printFlutterOnlyBoundry:</code> active only if printUnstableModes flag is true. This flag determines if only the unstable flutter modes and boundary should be plotted (when it's true) or the unstable rigid body modes should be also included (when it's false); By default this flag is true and therefore the flutter instability boundary is only plotted.
+
+<br/></li><li id='JfRACAgUCw1' class=''><code>plotSpdAltLoci:</code> to plot the airplane modes variations in the presence of altitude, airspeed, bank attitude and flight path angle variations across the flight envelope. The plots are saved as .png format in the user matlab current directory.
+
+<br/></li><li id='JfRACA2Lzlv' class=''><code>saveFltCnds:</code>  to save the flight condition parameters in the workspace for the next analyses
+
+<br/></li><li id='JfRACAhnNEJ' class=''><code>perfomCtrbObsvAnalysis:</code> to perform the "Modal" controllability/observability and Impulse residue analysis for selected modes
+
+<br/></li><li id='JfRACA0vLN4' class=''><code>plotTransferFunctions:</code> to plot the open loop transfer functions for the selected input-output pairs
+
+<br/></li><li id='JfRACA7pfe6' class=''><code>plotGustResponses:</code> to study the effect of atmospheric disturbances and gust on the aircraft response, 
+
+<br/></li><li id='JfRACALKsTq' class=''><code>useSISOtool:</code> to deploy the siso design tool to determine the preliminary control laws structure for the control of <i>high altitude lightly damped flexible modes</i>.
+
+<br/></li></ul></ul></div><h3 id='JfRACABLRcz'>Distributed Measurement System Design</h3>
+
+If states and modes of the aircraft state-space model are identified, the switch <code>perfomCtrbObsvAnalysis</code> can be turned on to determine the optimal distributed measurement system architecture to measure specific elastic modes. The following provides a sample analysis on Aquila aircraft. The script asks the user to enter the desired node number for the analysis from the list below ( the aircraft model is given at the chosen node on the airplane) - for <i>sensor blending</i> choose two sensor nodes location such as [2 5]:<br/>
+
+<br/>
+
+<code>Analysis_index_nodes</code><br/>
+
+<code>________________________</code><br/>
+
+<br/>
+
+<code>1 'IMU node'(332)</code><br/>
+
+<code>2 'Left inner (LI) motor node' (334)</code><br/>
+
+<code>3 'Left outer (LO) motor node' (335)</code><br/>
+
+<code>4 'Left wingtip (LW)' (336)</code><br/>
+
+<code>5 'Right wingtip (RW)' (340)</code><br/>
+
+<code>6 'Right outer (RO) motor node' (339)</code><br/>
+
+<code>7 'Right inner (RI) motor node' (338)</code><br/>
+
+<br/>
+
+<code>..........</code><br/>
+
+<code>Enter a node index from the above table ...</code><br/>
+
+<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:234px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/i_I1BvmxGH3IuJXOM4MaAg?a=3g1Z5Nb63S9BpAajbOja7NP5BVFXNngL5lH196aYykwa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAkrMW1' alt='' width='800' height='234' class='masked-image'></img></div></div>in the next step, an input-output pair should be determined for the analysis from the tables. The control input is selected from the table below (the input-output tables are printed and then asked the user to choose the appropriate input-output indices), <br/>
+
+<br/>
+
+The servo dynamics should be evaluated apriori. For the Aquila aircraft, the estimated values lead to a control bandwidth of about 2.5 Hz for the aircraft actuators. Testing of the actual servos resulted in an experimental bandwidth of about 4 to 5 Hz. Comparison of the roll and pitch control transfer functions between the estimated value and a model tuned to the experimental bandwidth showed little difference. This difference would be more pronounced if looking at aeroelastic responses.<br/>
+
+<br/>
+
+input should be chosen from the “Control_input” list:<br/>
+
+<code>Control_inputs</code><br/>
+
+<code>_________________</code><br/>
+
+<br/>
+
+<code>1 'elvCmd_rad'</code><br/>
+
+<code>2 'ailCmd_rad'</code><br/>
+
+<code>3 'thrCmd_Norm'</code><br/>
+
+<code>4 'diffThrCmd_Norm'</code><br/>
+
+<code>5 'splCmd_rad'</code><br/>
+
+<br/>
+
+The output is chosen from the “Output_signals” list (in the case of sensor blending, one output per each selected sensor node must be determined - such as [16 16] meaning both accelerometers at each sensor node):<br/>
+
+<br/>
+
+<code>Output_signals</code><br/>
+
+<code>______________</code><br/>
+
+<br/>
+
+<code>1 'p_n_m': <code>aircraft north position (in flat earth coordinate system)</code></code><br/>
+
+<code>2 'p_e_m': <code>aircraft east position (in flat earth coordinate system)</code></code><br/>
+
+<code>3 'pres_alt_m':<code>altitude in meters</code></code><br/>
+
+<code>4 'tas_mps': <code>True AirSpeed (TAS) in m/s</code></code><br/>
+
+<code>5 'phi_rad':<code>bank attitude measured at the node in radians</code></code><br/>
+
+<code>6 'theta_rad':<code>pitch attitude measured at the node in radians</code></code><br/>
+
+<code>7 'psi_rad':<code>mean axis heading measured at the node in radians</code></code><br/>
+
+<code>8 'p_radps':<code>roll rate measured at the node in radians/s</code></code><br/>
+
+<code>9 'q_radps':<code>q_radps: pitch rate measured at the node in radians/s</code></code><br/>
+
+<code>10 'r_radps':<code>yaw rate measured at the node in radians/s</code></code><br/>
+
+<code>11 'v_n_mps':<code>aircraft north velocity measured at the node in m/s</code></code><br/>
+
+<code>12 'v_e_mps':<code>aircraft east velocity measured at the node in m/s</code></code><br/>
+
+<code>13 'v_d_mps':<code>aircraft down velocity measured at the node in m/s</code></code><br/>
+
+<code>14 'a_x_IMU_mpss':<code>aircraft acceleration measured at the node x-axis m/s/s expressed in body mean axes frame</code></code><br/>
+
+<code>15 'a_y_IMU_mpss':<code>aircraft acceleration measured at the node y-axis m/s/s expressed in body mean axes frame</code></code><br/>
+
+<code>16 'a_z_IMU_mpss':<code>aircraft acceleration measured at the node z-axis m/s/s expressed in body mean axes frame</code></code><br/>
+
+<code>17 'StatPres_Pa':<code>Static pressure</code></code><br/>
+
+<code>18 'DynPres_Pa':<code>Dynamic pressure</code></code><br/>
+
+<code>19 'OAT':<code>outside air temperature</code></code><br/>
+
+<code>20 'eas_mps':<code>Equivalent airspeed</code></code><br/>
+
+<code>21 'aoa_rad':<code>aircraft angle of attack referring to the mean axis</code></code><br/>
+
+<code>22 'aos_rad':<code>aircraft angle of side-slip referring to the mean axis</code></code><br/>
+
+<code>23 'v_xb_mps':<code> TAS component in the x-axis of the mean axes coordinate frame in m/s</code></code><br/>
+
+<code>24 'v_yb_mps':<code> TAS component in the y-axis of the mean axes coordinate frame in m/s</code></code><br/>
+
+<code>25 'v_zb_mps':<code> TAS component in the z-axis of the mean axes coordinate frame in m/s</code></code><br/>
+
+<code>26 'gama_rad':<code>flight path angle in radians</code></code><br/>
+
+<br/>
+
+Residue study at the selected flight condition:<br/>
+
+alt = 18000, eas = 12.44, gamma = 0, phi = 0, delta_spoiler = 0: Converged,<br/>
+
+the first symmetric AE mode (flutter) is unstable:<br/>
+
+<div data-section-style='13'><table id='JfRACATWRc3' title='Sheet3' style='width: 39.2em'><thead><tr><th id='JfRACAPcS7o' class='empty' style='width: 13.4667em'>A<br/></th><th id='JfRACAaI5hF' class='empty' style='width: 25.7333em'>B<br/></th></tr></thead><tbody><tr id='JfRACAWK3pa'><td id='s:JfRACAWK3pa;JfRACAolNVO' style='text-align: center;vertical-align: middle;'><br>Mode
+
+<br/></td><td id='s:JfRACAWK3pa;JfRACAgOtii' style='text-align: center;vertical-align: middle;'><br>Mode_Index (based on the <b><i>aero-lag residualized</i></b>  model)
+
+<br/></td></tr><tr id='JfRACATL2Qr'><td id='s:JfRACATL2Qr;JfRACAolNVO' style='text-align: center;vertical-align: middle;'><br>1st AE mode (asymmetric)
+
+<br/></td><td id='s:JfRACATL2Qr;JfRACAgOtii' style='text-align: center;vertical-align: middle;'>26
+
+<br/></td></tr><tr id='JfRACAIkrrl'><td id='s:JfRACAIkrrl;JfRACAolNVO' style='text-align: center;vertical-align: middle;'><br>2nd AE mode (symmetric)
+
+<br/></td><td id='s:JfRACAIkrrl;JfRACAgOtii' style='text-align: center;vertical-align: middle;'>28
+
+<br/></td></tr><tr id='JfRACAPQXYu'><td id='s:JfRACAPQXYu;JfRACAolNVO' style='text-align: center;vertical-align: top;'><br>Phugoid
+
+<br/></td><td id='s:JfRACAPQXYu;JfRACAgOtii' style='text-align: center;vertical-align: middle;'>33
+
+<br/></td></tr><tr id='JfRACALMlhr'><td id='s:JfRACALMlhr;JfRACAolNVO' style='text-align: center;vertical-align: middle;'><br>Dutch roll
+
+<br/></td><td id='s:JfRACALMlhr;JfRACAgOtii' style='text-align: center;vertical-align: middle;'>35
+
+<br/></td></tr></tbody></table></div>For (N_z/δ_e ) system measured by the accelerometers at the IMU node locations (see the above list of the nodes)<br/>
+
+<div data-section-style='13'><table id='JfRACA6iUaN' title='Sheet6' style='width: 36.8em'><thead><tr><th id='JfRACAAB9zC' class='empty' style='width: 9.33333em'>A<br/></th><th id='JfRACAd8cEe' class='empty' style='width: 8.86667em'>B<br/></th><th id='JfRACAoyWvn' class='empty' style='width: 8.4em'>C<br/></th><th id='JfRACAzenox' class='empty' style='width: 10.2em'>D<br/></th></tr></thead><tbody><tr id='JfRACA4kSzg'><td id='s:JfRACA4kSzg;JfRACACkzSr' style='text-align: center;vertical-align: top;'><br>Mode_Index
+
+<br/></td><td id='s:JfRACA4kSzg;JfRACATzlCc' style='text-align: center;vertical-align: top;'><br>Modal_Obsv
+
+<br/></td><td id='s:JfRACA4kSzg;JfRACAGMWIc' style='text-align: center;vertical-align: top;'><br>Modal_Ctrb
+
+<br/></td><td id='s:JfRACA4kSzg;JfRACAThzGo' style='text-align: center;vertical-align: top;'><br>Impulse_Residue
+
+<br/></td></tr><tr id='JfRACASPUaZ'><td id='s:JfRACASPUaZ;JfRACACkzSr' style='text-align: center;vertical-align: top;'>26
+
+<br/></td><td id='s:JfRACASPUaZ;JfRACATzlCc' style='text-align: center;vertical-align: top;'>0.00162
+
+<br/></td><td id='s:JfRACASPUaZ;JfRACAGMWIc' style='text-align: center;vertical-align: top;'>0.02992
+
+<br/></td><td id='s:JfRACASPUaZ;JfRACAThzGo' style='text-align: center;vertical-align: top;'>4.86E-05
+
+<br/></td></tr><tr id='JfRACAKvUvb'><td id='s:JfRACAKvUvb;JfRACACkzSr' style='text-align: center;vertical-align: top;'>28
+
+<br/></td><td id='s:JfRACAKvUvb;JfRACATzlCc' style='text-align: center;vertical-align: top;'>1.006
+
+<br/></td><td id='s:JfRACAKvUvb;JfRACAGMWIc' style='text-align: center;vertical-align: top;'>51.38746
+
+<br/></td><td id='s:JfRACAKvUvb;JfRACAThzGo' style='background-color:#FFCDD2;text-align: center;vertical-align: top;'>51.69562
+
+<br/></td></tr><tr id='JfRACAd3UoG'><td id='s:JfRACAd3UoG;JfRACACkzSr' style='text-align: center;vertical-align: top;'>33
+
+<br/></td><td id='s:JfRACAd3UoG;JfRACATzlCc' style='text-align: center;vertical-align: top;'>0.00382
+
+<br/></td><td id='s:JfRACAd3UoG;JfRACAGMWIc' style='text-align: center;vertical-align: top;'>70.29024
+
+<br/></td><td id='s:JfRACAd3UoG;JfRACAThzGo' style='text-align: center;vertical-align: top;'>0.26868
+
+<br/></td></tr><tr id='JfRACAGd9aD'><td id='s:JfRACAGd9aD;JfRACACkzSr' style='text-align: center;vertical-align: top;'>35
+
+<br/></td><td id='s:JfRACAGd9aD;JfRACATzlCc' style='text-align: center;vertical-align: top;'>0.00529
+
+<br/></td><td id='s:JfRACAGd9aD;JfRACAGMWIc' style='text-align: center;vertical-align: top;'>0.0073
+
+<br/></td><td id='s:JfRACAGd9aD;JfRACAThzGo' style='text-align: center;vertical-align: top;'>3.86E-05
+
+<br/></td></tr></tbody></table></div>For (N_z/δ_e ) system measured by the accelerometers at the wing tip node locations:<br/>
+
+<div data-section-style='13'><table id='JfRACAotpMK' title='Sheet5' style='width: 37.6em'><thead><tr><th id='JfRACA1tw7O' class='empty' style='width: 9.13333em'>A<br/></th><th id='JfRACAPhi9C' class='empty' style='width: 9em'>B<br/></th><th id='JfRACAUTtGr' class='empty' style='width: 8.33333em'>C<br/></th><th id='JfRACAmgSX8' class='empty' style='width: 11.1333em'>D<br/></th></tr></thead><tbody><tr id='JfRACAzquwi'><td id='s:JfRACAzquwi;JfRACAbM1mL' style='text-align: center;vertical-align: top;'><br>Mode_Index
+
+<br/></td><td id='s:JfRACAzquwi;JfRACAr58rx' style='text-align: center;vertical-align: top;'><br>Modal_Obsv
+
+<br/></td><td id='s:JfRACAzquwi;JfRACA9ZwIz' style='text-align: center;vertical-align: top;'><br>Modal_Ctrb
+
+<br/></td><td id='s:JfRACAzquwi;JfRACAvOixp' style='text-align: center;vertical-align: top;'><br>Impulse_Residue
+
+<br/></td></tr><tr id='JfRACAMyAY4'><td id='s:JfRACAMyAY4;JfRACAbM1mL' style='text-align: center;vertical-align: top;'>26
+
+<br/></td><td id='s:JfRACAMyAY4;JfRACAr58rx' style='text-align: center;vertical-align: top;'>0.68142
+
+<br/></td><td id='s:JfRACAMyAY4;JfRACA9ZwIz' style='text-align: center;vertical-align: top;'>0.02992
+
+<br/></td><td id='s:JfRACAMyAY4;JfRACAvOixp' style='text-align: center;vertical-align: top;'>0.02039
+
+<br/></td></tr><tr id='JfRACAKEVY6'><td id='s:JfRACAKEVY6;JfRACAbM1mL' style='text-align: center;vertical-align: top;'>28
+
+<br/></td><td id='s:JfRACAKEVY6;JfRACAr58rx' style='text-align: center;vertical-align: top;'>1.61376
+
+<br/></td><td id='s:JfRACAKEVY6;JfRACA9ZwIz' style='text-align: center;vertical-align: top;'>51.38746
+
+<br/></td><td id='s:JfRACAKEVY6;JfRACAvOixp' style='background-color:#FFCDD2;text-align: center;vertical-align: top;'>82.92686
+
+<br/></td></tr><tr id='JfRACAxLDtQ'><td id='s:JfRACAxLDtQ;JfRACAbM1mL' style='text-align: center;vertical-align: top;'>33
+
+<br/></td><td id='s:JfRACAxLDtQ;JfRACAr58rx' style='text-align: center;vertical-align: top;'>0.00083
+
+<br/></td><td id='s:JfRACAxLDtQ;JfRACA9ZwIz' style='text-align: center;vertical-align: top;'>70.29024
+
+<br/></td><td id='s:JfRACAxLDtQ;JfRACAvOixp' style='text-align: center;vertical-align: top;'>0.05832
+
+<br/></td></tr><tr id='JfRACA37KYu'><td id='s:JfRACA37KYu;JfRACAbM1mL' style='text-align: center;vertical-align: top;'>35
+
+<br/></td><td id='s:JfRACA37KYu;JfRACAr58rx' style='text-align: center;vertical-align: top;'>0.26807
+
+<br/></td><td id='s:JfRACA37KYu;JfRACA9ZwIz' style='text-align: center;vertical-align: top;'>0.0073
+
+<br/></td><td id='s:JfRACA37KYu;JfRACAvOixp' style='text-align: center;vertical-align: top;'>0.00196
+
+<br/></td></tr></tbody></table></div><br/>
+
+The tool also performs analysis to make sure that control structure would be minimal in terms of required processing power by estimating the required order of the elastic mode controller (basically by counting the unstable branches in the <i>root locus plots</i> →  so the less unstable branches, the simpler controller will be required to stabilize the system.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:674px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/jRXgZX2MqDv8negGioDlCg?a=G8dga77alGtdIB6t0VaegfyXzuKq9efYIHj7O4NkuZAa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAY6yu5' alt='' width='800' height='673' class='masked-image'></img></div></div>The script also plots the airplane mode shapes as well as the undeformed shape to assure that the sensor locations are not in coincidence with the elastic node lines:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:352px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/BZlUsPgPKbfREK2UxdTnOQ?a=nziqA5Nhz0DggxnBqSvKIZ72S13TJFoQ5dZSmzNzPJMa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAthrC6' alt='' width='800' height='351' class='masked-image'></img></div></div><div data-section-style='6'><ul id='JfRACAnDPtS'><ul><li id='JfRACALQce9' class='' value='1'>Modes 1-6 should be rigid body translations and rotations (there may be some amount of elevon rotation as well).
+
+<br/></li><li id='JfRACAOHfAQ' class=''>Modes 7 and 8 are primarily elevon rotation, we will lower scale factor to see it without so much distortion (it could be different depending on the modeling strategy).
+
+<br/></li><li id='JfRACAVEqtT' class=''>The rest would be the flexible modes.
+
+<br/></li><li id='JfRACAQYV34' class=''>In general, it is a bit difficult to qualitatively describe the modes as the wing is a more complicated structure than a straight beam. Many types of motion may be present in each mode.
+
+<br/></li><li id='JfRACATb7ke' class='parent'>based on the i_mode value (it's confirmed based on the eigenstructure analysis):
+
+<br/></li><ul><li id='JfRACA8E6Ar' class=''>i_mode=9 →  first asymmetric bending (mode index 26 in aero-lag residualized model - see the above table)
+
+<br/></li><li id='JfRACAbEIdq' class=''>i_mode=10→ first symmetric bending/symmetric torsion/sp ((mode index 28 in the aero-lag residualized model - see the above table)
+
+<br/></li><li id='JfRACAAiw4g' class=''>i_mode=11→ second symmetric bending
+
+<br/></li><li id='JfRACAiOBoL' class=''>I_mode=12→ first symmetric torsion
+
+<br/></li><li id='JfRACARLoQq' class=''>I_mode=13→ second asymmetric bending
+
+<br/></li><li id='JfRACAhQoxZ' class=''>I_mode=14→ first asymmetric torsion
+
+<br/></li><li id='JfRACAqo5vR' class=''>I_mode=15→ third symmetric bending
+
+<br/></li><li id='JfRACAHjLcm' class=''>I_mode=16→ first asymmetric elevon bending
+
+<br/></li><li id='JfRACAp4KZt' class=''>I_mode=17→first symmetric elevon bending
+
+<br/></li><li id='JfRACAvO97f' class=''>I_mode=18→ second symmetric torsion
+
+<br/></li><li id='JfRACAtrRjs' class=''>I_mode=19→ second asymmetric torsion
+
+<br/></li><li id='JfRACAfoWlJ' class=''>I_mode=20→ third asymmetric bending
+
+<br/></li></ul></ul><li id='JfRACAqJJwo' class=''>Regarding the dry mode shape frequencies: For Aquila aircraft, the vacuum mode frequencies are (from Nastran directly):
+
+<br/></li></ul></div><div data-section-style='13'><table id='JfRACAYNOFl' title='Sheet2' style='width: 12em'><thead><tr><th id='JfRACAiLLGi' class='empty' style='width: 6em'>A<br/></th><th id='JfRACAhqabx' class='empty' style='width: 6em'>B<br/></th></tr></thead><tbody><tr id='JfRACA4oXa0'><td id='s:JfRACA4oXa0;JfRACAD3SmT' style=''>Mode
+
+<br/></td><td id='s:JfRACA4oXa0;JfRACAx6C1O' style=''>Freq [Hz]
+
+<br/></td></tr><tr id='JfRACAyegol'><td id='s:JfRACAyegol;JfRACAD3SmT' style=''>1
+
+<br/></td><td id='s:JfRACAyegol;JfRACAx6C1O' style=''>0
+
+<br/></td></tr><tr id='JfRACATJAgS'><td id='s:JfRACATJAgS;JfRACAD3SmT' style=''>2
+
+<br/></td><td id='s:JfRACATJAgS;JfRACAx6C1O' style=''>0
+
+<br/></td></tr><tr id='JfRACAaUrYG'><td id='s:JfRACAaUrYG;JfRACAD3SmT' style=''>3
+
+<br/></td><td id='s:JfRACAaUrYG;JfRACAx6C1O' style=''>0
+
+<br/></td></tr><tr id='JfRACAwRJPE'><td id='s:JfRACAwRJPE;JfRACAD3SmT' style=''>4
+
+<br/></td><td id='s:JfRACAwRJPE;JfRACAx6C1O' style=''>0
+
+<br/></td></tr><tr id='JfRACAXqW2G'><td id='s:JfRACAXqW2G;JfRACAD3SmT' style=''>5
+
+<br/></td><td id='s:JfRACAXqW2G;JfRACAx6C1O' style=''>0
+
+<br/></td></tr><tr id='JfRACAURFr9'><td id='s:JfRACAURFr9;JfRACAD3SmT' style=''>6
+
+<br/></td><td id='s:JfRACAURFr9;JfRACAx6C1O' style=''>0
+
+<br/></td></tr><tr id='JfRACAsJMg2'><td id='s:JfRACAsJMg2;JfRACAD3SmT' style=''>7
+
+<br/></td><td id='s:JfRACAsJMg2;JfRACAx6C1O' style=''>0
+
+<br/></td></tr><tr id='JfRACAi7KhU'><td id='s:JfRACAi7KhU;JfRACAD3SmT' style=''>8
+
+<br/></td><td id='s:JfRACAi7KhU;JfRACAx6C1O' style=''>0
+
+<br/></td></tr><tr id='JfRACANezoe'><td id='s:JfRACANezoe;JfRACAD3SmT' style=''>9
+
+<br/></td><td id='s:JfRACANezoe;JfRACAx6C1O' style=''>1.11
+
+<br/></td></tr><tr id='JfRACALU5aT'><td id='s:JfRACALU5aT;JfRACAD3SmT' style=''>10
+
+<br/></td><td id='s:JfRACALU5aT;JfRACAx6C1O' style=''>1.12
+
+<br/></td></tr><tr id='JfRACAX26U3'><td id='s:JfRACAX26U3;JfRACAD3SmT' style=''>11
+
+<br/></td><td id='s:JfRACAX26U3;JfRACAx6C1O' style=''>1.87
+
+<br/></td></tr><tr id='JfRACAGGZtI'><td id='s:JfRACAGGZtI;JfRACAD3SmT' style=''>12
+
+<br/></td><td id='s:JfRACAGGZtI;JfRACAx6C1O' style=''>2.66
+
+<br/></td></tr><tr id='JfRACAbAIau'><td id='s:JfRACAbAIau;JfRACAD3SmT' style=''>13
+
+<br/></td><td id='s:JfRACAbAIau;JfRACAx6C1O' style=''>2.74
+
+<br/></td></tr><tr id='JfRACAyIESJ'><td id='s:JfRACAyIESJ;JfRACAD3SmT' style=''>14
+
+<br/></td><td id='s:JfRACAyIESJ;JfRACAx6C1O' style=''>3.03
+
+<br/></td></tr><tr id='JfRACAdlyQi'><td id='s:JfRACAdlyQi;JfRACAD3SmT' style=''>15
+
+<br/></td><td id='s:JfRACAdlyQi;JfRACAx6C1O' style=''>4.17
+
+<br/></td></tr><tr id='JfRACAivW1p'><td id='s:JfRACAivW1p;JfRACAD3SmT' style=''>16
+
+<br/></td><td id='s:JfRACAivW1p;JfRACAx6C1O' style=''>4.96
+
+<br/></td></tr><tr id='JfRACAZ9Ask'><td id='s:JfRACAZ9Ask;JfRACAD3SmT' style=''>17
+
+<br/></td><td id='s:JfRACAZ9Ask;JfRACAx6C1O' style=''>4.97
+
+<br/></td></tr><tr id='JfRACAeUn8p'><td id='s:JfRACAeUn8p;JfRACAD3SmT' style=''>18
+
+<br/></td><td id='s:JfRACAeUn8p;JfRACAx6C1O' style=''>5.94
+
+<br/></td></tr><tr id='JfRACA7eexj'><td id='s:JfRACA7eexj;JfRACAD3SmT' style=''>19
+
+<br/></td><td id='s:JfRACA7eexj;JfRACAx6C1O' style=''>6.35
+
+<br/></td></tr><tr id='JfRACAIJM8V'><td id='s:JfRACAIJM8V;JfRACAD3SmT' style=''>20
+
+<br/></td><td id='s:JfRACAIJM8V;JfRACAx6C1O' style=''>7.06
+
+<br/></td></tr></tbody></table></div>The nodes which don’t make up the structure of the wing include motor masses, propeller disk centers, nominal CG, spoiler force reference, and motor pod attachments. The elevon hinges are not usually at the ends of the control surface, so the ends can deflect relative to the wing.<br/>
+
+<br/>
+
+The control surfaces do indeed participate in the flexible modes as they are attached with finite stiffness. One thing that may be deceptive is the scale of the deflections. The analysis that solved for the modes is linear which has a small displacement assumption. We may scale up the deflection to see them in the plot, the shapes get distorted, especially for the control surfaces where you have rotations.<br/>
+
+<br/>
+
+<h3 id='JfRACAkx4ZU'>sensor blending</h3>
+
+Sensors on the airplane can be blended to take advantage of various sensor locations (and types). The tool provides a systematic methodology to design a blended measurement system. First, the observability and impulse residue metrics are computed to determine the optimal sensor type and locations on the aircraft to measure a specific elastic mode. For the Aquila example, the analysis revealed that the wingtip accelerometers provide the highest level of observability and impulse residue metrics  (see the obsv/ctrb tables above)  associated with the first symmetric bending mode (Body Freedom Flutter). This mode becomes lightly damped as speed increases and eventually becomes unstable at higher speeds (Flutter boundary speed is a function of altitude). So measuring and active control of this elastic bending mode might be necessary, specifically at higher altitudes. The tool also takes advantage of the root locus control design method to assess the complexity of the prospect control laws of the elastic mode(s). This is done by counting the unstable branches in the root locus plots of the transfer function from a specific servo(s) to the selected sensor suite; note that varying the sensor location varies the system zeros which consequently varies the system root locus shape. The less unstable branches, the simpler the controller needs to be designed and therefore the control laws structure would be minimal in terms of required processing power. For example, for only one unstable branch in the resultant system root locus, a simple 1st order controller (gain+lead/lag) should be sufficient to stabilize the unstable flexible mode. Finally, the mode shapes of the airplane are plotted to assure no coincidence between the elastic node lines and the sensor locations. The outcome of the different analysis approaches might result in different sensors type and location scenarios which can then be blended to take advantage of each individual configuration.  For the Aquila airplane, this analysis determines that a combination of the vertical accelerometers mounted at the inner motor pods and the vertical accelerometers mounted at the wingtips (look at the red diamonds in the below figure) is the optimal sensing solution to be utilized in the flutter (BFF) suppression (first elastic bending mode control) control loop. <br/>
+
+<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:198px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/iu0NoUzUsCaf3OOjxNhCsA?a=aiy8YlCywM6e3obMkF1FwDseiJAQLttqVFaFm3lDJioa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACARrAY4' alt='' width='800' height='198' class='masked-image'></img></div></div><br/>
+
+<br/>
+
+<h3 id='JfRACA5B4Gg'>Flexible Mode Controller Design:</h3>
+
+The Prerequisite of this step is to determine the sensing system and control surface(s) from the analysis above for the flexible mode(s) suppression and control. This would be also equivalent to finding the transfer function from the specific servo/control surface to the designed sensing suite. For the Aquila airplane case, the servo and (blended) sensors configuration is shown in the above figure. The transfer function is formulated by:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:88px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/nfPHSIAfArHH4Qo4GMk2pQ?a=rdKlmOa66d6VgVSVzap8atswMzVrya4UJ1e2ZLJYonUa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAmaxPO' alt='' width='800' height='87' class='masked-image'></img></div></div><br/>
+
+Note that the right and left accelerometer sensors are averaged to eliminate the effect of asymmetric elastic (bending) modes. Once the appropriate transfer function is determined, the user may proceed to the control laws design step by turning on the <code>useSISOtool</code>  switch. The preliminary control laws can then be designed by using MATLAB's interactive SISO design tool to fulfill the stability margin requirements for the flexible mode control loop. The design page should look like the following:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:628px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/kl4lvRJaw9_bgcaUa8Y_Kw?a=VK2miIlLhJa6caM5rqRYZ2TnswI3TUNsdxUbiVpEdbIa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAzhN1q' alt='' width='800' height='627' class='masked-image'></img></div></div><br/>
+
+A general compensator design procedure can be summarized in the following 4 steps:<br/>
+
+<div data-section-style='6'><ul id='JfRACAfEXuU'><li id='JfRACAAVc18' class='' value='1'>Adjust the gain in the open loop to make sure that the unit conversations are done properly. For Aquila airplane, the inner (open loop) loop dynamics is  <code>N_z/δ_e</code> . N_z unit is m⁄s^2  . δ_e  is the control surface command. Its unit is rad. So the gain controller command rad surface deflection, and therefore must be in the order of <code>pi/180 = 0.0175</code>.
+
+<br/></li><li id='JfRACAjGdVZ' class=''>If the high-frequency behavior of the open loop dynamic is not satisfactory; If the frequency response shows significant magnifications at frequencies above <code>w_rolloff,</code> the first step would be to choose a roll-off filter with a cut-off frequency at the w_rolloff to improve the high-frequency responses.
+
+<br/></li><li id='JfRACA0kFTQ' class=''>Given (from the previous analysis) that the (unstable) flexible mode to be stabilized is located at <code>w_flex</code> , <b>Phase margin around this frequency must be increased</b>. Therefore a lead compensator is required to add sufficient phase at this frequency to have at least ϕ_flex=30 deg phase margin.
+
+<br/></li><li id='JfRACA5c6YS' class=''>Finally, if the gain margin is not adequate (at least GM=6dB), a notch compensator can be added with a notch frequency centered at the  ω(-180).
+
+<br/></li></ul></div><br/>
+
+These steps provide a preliminary control laws structure for the flexible mode(s) control. However, the design needs to be incorporated into the Simulink model of the control design toolbox to evaluate the flexible mode(s) control loops interaction on the rigid body control (the original flight control loops such as pitch/rate control loop, speed loop, etc) loops. In order to do that the designed compensator is implemented into the flexible mode control block of the Simulink model, see the Flexible_mode_control_laws in below<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:459px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/3OL6LnvYFZ49tN7mI_3kuA?a=niac2RjEdJWaJhaCiFV3oXo2sTY4Gy53X21izmeGansa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAkqUPR' alt='' width='800' height='458' class='masked-image'></img></div></div><br/>
+
+Furthermore, the state space model of the designated transfer function with the appropriate control surface input and the blended sensor output measurements should be incorporated into the state space model box designated to the off-center sensor's output. See the model block in the picture below in which the top state space model block outputs the measurements obtained at a centerline located (IMU) sensor suite whereas the bottom model block outputs the measurements from the off-center blended sensors suite (distributed across the wing or fuselage). <br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:479px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/R_wWQ-BBzgYVGLE-wBPy_Q?a=Z0dRfPFj1QBjNyrAb63ySs1LjB2ViGRnjqyPtsDk0H0a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAnhjk7' alt='' width='800' height='478' class='masked-image'></img></div></div><br/>
+
+<br/>
+
+<br/>
+
+This cross-examination is done more intensively in the nonlinear airplane model environment which is described later.<br/>
+
+ <br/>
+
+<br/>
+
+<br/>
+
+<h1 id='JfRACAS0lUt'>Module 3 - Control Laws Tuning, Stability, Performance and Robustness Analysis:</h1>
+
+<h2 id='JfRACAzMpbq'>Summary</h2>
+
+Module 3 has 2 sections for the flight control system design, the first section deals with the control laws design for the rigid body modes (this is conventional as if we are dealing with a conventional rigid body airplane), so controlling altitude, pitch and roll etc with rigid body assumption with a sensor at airplane center-body (IMU node location at the aircraft picture above). The second section deals with the elastic mode(s) analysis and control by using a distributed sensing system.<br/>
+
+<br/>
+
+Module 3 is for control laws gain and parameters tuning over the designated flight envelop - the main script to run is “OptimiseAquilaClaws_Main.m”. The autopilot Control laws (Claws) is predefined in the corresponding Simulink model (LinLongNormal_Aquila_Claws_Discrete) and usually consisted of longitudinal and lateral/directional channels. The claws in longitudinal channel consist of the following loops:<br/>
+
+<div data-section-style='5'><ul id='JfRACAzAYr7'><li id='JfRACA7Fqn0' class='' value='1'>Pitch loop (PitchLoop)
+
+<br/></li><li id='JfRACAcVjYK' class=''>Climb rate loop (ClimbRateLoop)
+
+<br/></li><li id='JfRACAsRHPf' class=''>Airspeed loop (TASLoop)
+
+<br/></li><li id='JfRACA58SkG' class=''>Power Loop (PwrLoop)
+
+<br/></li><li id='JfRACA4Zchi' class=''>Altitude Loop (AltLoop)
+
+<br/></li><li id='JfRACAZnBna' class=''>Flexible mode(s) Loop (FlexLoop)
+
+<br/></li><li id='JfRACAiNAU0' class=''>GLA Loop (GLALoop)
+
+<br/></li></ul></div>And the lateral/directional channels includes the following control loops:<br/>
+
+<div data-section-style='5'><ul id='JfRACAMSIkx'><li id='JfRACAZAcEG' class='' value='1'>Roll loop (RollLoop)
+
+<br/></li><li id='JfRACAY1BDs' class=''>Ground track loop (GndTrkLoop)
+
+<br/></li><li id='JfRACAqqrhG' class=''>Yaw rate loop (YawRateLoop)
+
+<br/></li></ul></div>The tool runs from OptimiseAquilaClaws_Main.m script. Path setup and the Simulink model initialization occurs in OptimiseAquilaClaws_init.m script. Inside the init function, script AquilaDiscreteClawsParameters.m is called which initializes all the tunable gains and parameters of the control loops. These tunable variables are named based on their loop name starting with the autopilot abbreviation AP. For instance, the tunable parameters for the pitch loop in the longitudinal control laws channel include:<br/>
+
+<div data-section-style='5'><ul id='JfRACAznv1z'><li id='JfRACAGNpuf' class='' value='1'>AP_PitchLoop_Kp : Autopilot pitch loop proportional gain
+
+<br/></li><li id='JfRACANhblf' class=''>AP_PitchLoop_Ki: Autopilot pitch loop integral gain
+
+<br/></li><li id='JfRACAZFd3g' class=''>AP_PitchLoop_qFdbkLLFiltNumCoe: Autopilot pitch loop - the damper feedback lead/lag (LL) filter numerator coefficient
+
+<br/></li><li id='JfRACALLuTX' class=''>AP_PitchLoop_qFdbkLLFiltDenCoe: Autopilot pitch loop - the damper feedback lead/lag (LL) filter denominator coefficient, ...
+
+<br/></li></ul></div>All the tunable variables are represented within orange blocks in the Simulink model. <b><i>Always start the design by using only the proportional and integral (if need be) terms; After the first round of the design, include the lead/lag and notch filters only if phase and/or magnitudes require augmentations</i></b>.  <i>To review and/or change the control laws structure used</i>, open the main Simulink model “LinLongNormal_Aquila_Claws_Discrete”. Longitudinal control laws reside in the box “Longitudinal_Control_Laws” and lateral/directional control laws are implemented in “Lateral_Directional_Control_Laws” box. <i>Note that when a new tunable parameter of a particular loop is selected, its name must be added to the “optvars_LoopName” along with its minimum/maximum range and an initial condition. </i>  <br/>
+
+<br/>
+
+At first, inside the OptimiseAquilaClaws_init.m script, set the path to the control laws design folder - This is usually the Aquila_Claws_Design_Cascaded folder which contains the Utility, Model, etc subfolders. <br/>
+
+<br/>
+
+Next, set up the parameters and switches within the OptimiseAquilaClaws_Main.m script:<br/>
+
+<div data-section-style='5'><ul id='JfRACAsty32'><li id='JfRACA7xcwV' class='parent' value='1'>Optimize4MultipleFlts: determines if the optimizer is called to adjust the gains over various flight conditions (TRUE) or just one specific flight condition (FALSE)
+
+<br/></li><ul><li id='JfRACAIJkfT' class=''>if Optimize4MultipleFlts is TRUE then the control laws in Simulink model “LinLongNormal_Aquila_ClawsGainSchedule_Discrete” with the gain scheduling setup is selected and will be tuned up; otherwise the single case controller in the model “LinLongNormal_Aquila_Claws_Discrete” is utilized. 
+
+<br/></li></ul><li id='JfRACAGMtME' class=''>flight conditions in the “flt” data struct as flt.alts, flt.eass, etc → The aircraft linearized model matrices are then read from a data file and are replaced in the aircraft model block (green block) of the Simulink model,
+
+<br/></li><li id='JfRACA3Hq8p' class=''>ReadFltCndFrmCSVFile: determines if the flight conditions should be read from spreadsheet FltCndInput.csv
+
+<br/></li><li id='JfRACAaEzCz' class=''>OptConfig : configuration of the loops to be optimized e.g. 'PitchLoop/ClimbRateLoop/TASLoop/PwrLoop/AltLoop'. names of the loops should be separated by / and should be chosen only from the following list:
+
+<br/></li></ul></div><pre id='JfRACAmQ3FD'>%      1. 'PitchLoop':                    for pitch loop design,<br>%      2. 'ClimbRateLoop':                for ClimbRate loop design <br>%      3. 'TASLoop':                      for TAS loop design<br>%      4. 'PwrLoop':                      for pwr loop design      <br>%      5. 'AltLoop':                      for altitude loop design <br>%      6. 'RollLoop':                     for Roll/rate loop design <br>%      7. 'GndTrkLoop':                   for Ground track loop design <br>%      8. 'YawRateLoop':                  for Yaw rate loop design <br>%      9. 'FlexLoop':                     for Flexible mode(s) control loop design <br>%      9. 'GLALoop':                      for GLA control loop design <br></pre>
+
+Finally, the rest of the design toolbox configuration and setup is done in the OptConfigSetup.m script only when they need to be different from the following default values initialized in OptimizeAquilaClaws_Discrete_GS.m script (otherwise the default values are used during the tuning process):<br/>
+
+<pre id='JfRACA4PRaZ'>% DEFAULT INITIALISATIONS<br><br>default.ACModelName                 = 'Aquila_OL_Model_15_May_2018_08_16_19.mat';          %the *.mat file containing the aircraft ASE model<br>default.ClimbRateLoopTuningGoals    = {'Freq_Shaping','Step_Tracking','Margins'};          %The tuning goals for the Climb Rate Loop<br>default.TASLoopTuningGoals          = {'Freq_Shaping','Step_Tracking','Margins'};          %The tuning goals for the TAS Loop<br>default.PwrLoopTuningGoals          = {'Freq_Shaping','Step_Tracking','Margins'};          %The tuning goals for the Pwr Loop<br>default.AltLoopTuningGoals          = {'Freq_Shaping','Step_Tracking','Margins'};          %The tuning goals for the Alt Loop<br>default.YawRateLoopTuningGoals      = {'Freq_Shaping','Step_Tracking','Margins'};          %The tuning gaols for the Yaw rate loop<br>default.RollLoopTuningGoals         = {'Freq_Shaping','Step_Tracking','Margins'};          %The tuning goals for the Roll/rate Loop<br>default.FlexLoopTuningGoals         = {'Margins'};<br>default.GLALoopTuningGoals          = {'Margins'};<br>default.DesiredPitchLoopBW          = 0.63;   %in rad (0.1 Hz)<br>default.DesiredPitchLoopPM          = 55;     %in deg<br>default.DesiredPitchLoopGM          = 8;      %in dB<br>default.DesiredPitchLoopMaxFreq     = 40;     %in rad/sec<br>default.DesiredPitchLoopOV          = 0.15;   %percent overshoot<br>default.DesiredClimbRateLoopBW      = 0.25;   %in rad<br>default.DesiredClimbRateLoopPM      = 55;     %in deg<br>default.DesiredClimbRateLoopGM      = 8;      %in dB<br>default.DesiredClimbRateLoopOV      = 0.15;   %percent overshoot<br>default.DesiredTASLoopBW            = 0.1;   %in rad<br>default.DesiredTASLoopPM            = 55;     %in deg<br>default.DesiredTASLoopGM            = 8;      %in dB<br>default.DesiredTASLoopOV            = 0.05;   %percent overshoot<br>default.DesiredPwrLoopBW            = 0.2;    %in rad<br>default.DesiredPwrLoopPM            = 55;     %in deg<br>default.DesiredPwrLoopGM            = 8;      %in dB<br>default.DesiredPwrLoopOV            = 0.05;   %percent overshoot<br>default.DesiredAltLoopBW            = 0.1;    %in rad<br>default.DesiredAltLoopPM            = 55;     %in deg<br>default.DesiredAltLoopGM            = 8;      %in dB<br>default.DesiredAltLoopOV            = 0.1;    %percent overshoot<br>default.DesiredRollLoopBW           = 0.1;    %in rad<br>default.DesiredRollLoopPM           = 55;     %in deg<br>default.DesiredRollLoopGM           = 8;      %in dB<br>default.DesiredRollLoopMaxFreq      =100;     %in rad<br>default.DesiredRollLoopOV           = 0.1;    %percent overshoot<br>default.DesiredGndTrkLoopBW         = 0.1;    %in rad<br>default.DesiredGndTrkLoopPM         = 55;     %in deg<br>default.DesiredGndTrkLoopGM         = 8;      %in dB<br>default.DesiredGndTrkLoopOV         = 0.1;    %percent overshoot<br>default.DesiredYawRateLoopBW        = 0.1;    %in rad<br>default.DesiredYawRateLoopPM        = 55;     %in deg<br>default.DesiredYawRateLoopGM        = 8;      %in dB<br>default.DesiredYawRateLoopOV        = 0.1;    %percent overshoot<br>default.DesiredFlexLoopGM           = 6;      %in dB<br>default.DesiredFlexLoopPM           = 45;     %in deg<br>default.DesiredGLALoopGM            = 6;      %in dB<br>default.DesiredGLALoopPM            = 45;     %in deg<br>default.optvars                     = {'AP_PitchLoop_Kp','AP_PitchLoop_Ki','AP_PitchLoop_Kd','AP_PitchLoop_Kff','AP_PitchLoop_Kq','AP_PitchLoop_qFdbkFiltNumCoe', 'AP_PitchLoop_qFdbkFiltDenCoe'};    %Name of the vars to be optimised<br>default.optvarsBlk                  = {};    %Name of the Block names to be optimised<br>default.optvarsinit                 = [0.3,    0.12,   0.05,  -0.5,  -0.9,  -0.5,   -0.9] ;<br>default.silence                     = 0 ; <br>default.optvarsMin                  = [0.05,   0.05,   0.05,  -1,    -1,    -1,     -1 ] ;<br>default.optvarsMax                  = [1.5,    0.9,    0.5,    0 ,    0,     0,     0] ;<br>default.PitchLoopOptSetting         = [1,((1e-2)*0.04)];                     % {'RandomStart','MinDecay'} ;  [10,1e-2]<br>default.OptOut                      = {};                                    % a structure in which the opt results are saved into<br>default.SkipLoadLinData             = 0;<br>default.WriteBlocksOptValues        = 1;                                     % If TRUE, the optimized values are written into the Simulink model blocks<br>default.KeepBlocksOptValues         = 0;                                     % If TRUE, the optimized values are written into the Simulink workspace to be used for the next optimization, although it wouldn't override the user defined initial condition<br>default.Optimize4MultipleFlts       = 1;                                     % If TRUE (1), performs the optimization for multiple flight scenarios (make sure multiple flight conditions have been provided)<br>default.OptConfig                   = 'PitchLoop';                           % Define the loop which should be optimised<br>default.OptModePlot                 = 'Off';                                 % If 'On' plots the open loop and closed loop system modes<br>default.OptviewSpec                 = 'On';<br>default.SISOMargin                  = 'Off';<br>default.MIMOMargin                  = 'Off';                                 % If 'On', also measures the MIMO (disk) margins<br>default.Write2PptFile               =  0;                                    % If TRUE (1), will write all the results into a *.ppt file<br>default.Write2XcelSheet             =  0;                                    % If TRUE (1), will write all the results into a *.xlsx sheet<br>default.Ts                          = (1/25);<br>default.OutputFileName              = 'OptOut.mat';                          %should be a mat file which contains the opt results, the control system performance measures as well as the flight conditions for which the control system has been designed.<br>default.OutputXcelFileName          = 'ClawsOptOut.csv';                    %should be a mat file which contains the opt results, the control system performance measures as well as the flight conditions for which the control system has been designed.<br>default.ReadFltCndFrmCSVFile        = 0 ;                                   %If TRUE, will read the input flight conditions from an input csv data file<br>default.InputXcelFileName           = 'FltCndInput.csv';                    %should be a mat file which contains the opt results, the control system performance measures as well as the flight conditions for which the control system has been designed.<br>default.UsePrevOptResultAsIC        = 0;                                    % If this is set to zero, the code uses the standard pre-defined initial conditions for the control parameters/coeffs. However if it set to 1, then it uses the last round of tuned parameters stored in 'OptOut.mat'<br>default.getAllCrossovers            = 1;                                    %Some loops often have multiple places where they cross the 0db line. If this is set to 1 we get all of them in our output file and table and if its set to 0, we just get the last one.<br>default.PlotOpenLoopFltDyn          = 1 ;                                   %Plot Open Loop Flight Dynamic bodes, step responses and pole/zero<br>default.ShowOpenLoopFltDyn          = 1 ;                                   %Shows the aircraft open loop properties, location of sensors and servos and the mode shapes for the single flight condition (@Trim) <br>default.UseFullOrderModel           = 1 ;                                   %Uses full order model for single flight condition control laws design (@Trim)<br>default.UseTruncatedReducedOrder    = 0 ;                                   %Uses reduced order model for single flight condition control laws design - The order is reduced by truncation<br>default.UseResidulizedReducedOrder  = 0 ;                                   %Uses reduced order model for single flight condition control laws design - The order is reduced by residulization <br>default.FlexControlActive           = 1 ;                                   %If TRUE (1), designs control laws to suppress lightly damped flexible modes (higher altitude, marginal speeds)   <br>default.FlexControlInputIndex       = 1 ;                                   %Index of the most effective control surface input for flexible mode control - based on the analysis in Module 2:AquilaFltDynAnalysis<br>default.FlexControlOutputIndex      = 16 ;                                  %Index of the most effective measurement output for the flexible mode control - based on the analysis in Module 2:AquilaFltDynAnalysis         <br>default.GLAControlActive            = 1 ;                                   %If TRUE (1), designs control laws to alleviate loads on the wing and body of the aircraft due to gust  <br> </pre>
+
+<br/>
+
+As an example, the desired pitch loop bandwidth “DesiredPitchLoopBW” is set to 0.63 radians by default; If the pitch loop is selected for tuning and the bandwidth isn't defined in OptConfigSetup.m script, the default value of 0.63 radians is used as the tuning requirement (Scroll to the right to see the comments in the picture below). <br/>
+
+the tuning goals are also defined in here (if need be). The default structure for the individual loops tuning goal consists of  “Freq_Shaping”, “Step_Tracking” and “Margins” which are standardized Matlab “Systune” function tuning goals (<a href="https://www.mathworks.com/help/slcontrol/ug/systune.html">https://www.mathworks.com/help/slcontrol/ug/systune.html</a>). <br/>
+
+<br/>
+
+As another example, the two fields “AquilaModelInputNames” and “AquilaModelOutputNames”  lists the current nomenclature of the input and output signals to the linear model “Aquila_Lin_Model” in the Simulink model. In case another model with a different order of the input-output signals used, the “AquilaModelInputNames” and “AquilaModelOutputNames” fields will need to be modified in the OptConfigSetup.m script as well, otherwise, the default list is applied.<br/>
+
+<br/>
+
+Other default variables include:<br/>
+
+<div data-section-style='6'><ul id='JfRACAFxuPW'><li id='JfRACA1p8l3' class='' value='1'>PitchLoopOptSetting: has 2 elements - the first element determines the number of initial conditions randomly chosen for which the Systune optimization will run (see the “RandomStart” setting in the Systune help). The second element is the minimum allowable decay time acceptable (see the “ Mindecay” setting in the Systune help).
+
+<br/></li><li id='JfRACAxI06A' class=''>PlotOpenLoopFltDyn: switch to turn on/off plotting the open loop transfer functions of the aircraft - default is 1
+
+<br/></li><li id='JfRACAI2AI3' class='parent'>ShowOpenLoopFltDyn: switch to turn on/off showing the open loop aircraft data including:
+
+<br/></li><ul><li id='JfRACAkqBVK' class=''>mass and inertia
+
+<br/></li><li id='JfRACAUxY4o' class=''>trim values at the given flight condition
+
+<br/></li><li id='JfRACA2Pdns' class=''>IMU and artificial sensors/accelerometers node locations (in body frame - sketches will be provided) 
+
+<br/></li><li id='JfRACAyLKVl' class=''>mode shapes
+
+<br/></li></ul><li id='JfRACAIfarO' class=''>UseFullOrderModel: switch to select the full order model for the control laws design process.
+
+<br/></li></ul></div><br/>
+
+After the tuning process is accomplished, the adjusted control laws gains and the filter coefficients are tabulated in the command window and saved in a structure defined by “OutputFileName” (see the list above). Also, plots comparing the designed and desired responses are presented. <br/>
+
+<br/>
+
+The “Aquila_Lin_Model” in Aquila_model block of the Simulink model “LinLongNormal_Aquila_Claws_Discrete” has 6 inputs (default sequence):<br/>
+
+<div data-section-style='6'><ul id='JfRACAkzNKQ'><li id='JfRACAIQ3bf' class='' value='1'>elvCmdDeg : longitudinal control surfaces (collective elevon) command in degree 
+
+<br/></li><li id='JfRACAOU0vE' class=''>ailCmdDeg: lateral control surfaces command (differential elevon) in degree
+
+<br/></li><li id='JfRACA28xRh' class='parent'>CollThrCmdNorm: collective throttle/power command normalized 
+
+<br/></li><ul><li id='JfRACAfLOuK' class=''>for Aquila airplane:<code> cT = collective throttle command, and dT = differential throttle command</code>, then
+
+<br/></li><li id='JfRACA3lCRY' class=''><code>T_OL = cT + dT</code>
+
+<br/></li><li id='JfRACAgfZ7Y' class=''><code>T_IL = cT + f*dT</code>
+
+<br/></li><li id='JfRACADwZRQ' class=''><code>T_IR = cT - f*dT</code>
+
+<br/></li><li id='JfRACA0hwgO' class=''><code>T_OR = cT - dT</code>
+
+<br/></li><li id='JfRACArs2yA' class=''>where f is a geometric factor, <code>f = 4870/13449 = 36.2%</code>
+
+<br/></li><li id='JfRACAULizL' class=''><code>Motor torque command = 45.2 (Nm) * throttle command</code>
+
+<br/></li></ul><li id='JfRACAHiz6z' class='parent'>rdrCmdNorm: directional control command normalized (<code>differential throttle command)</code>
+
+<br/></li><ul><li id='JfRACAUNrz2' class=''>for Aquila airplane:  = CollThrCmdNorm
+
+<br/></li></ul><li id='JfRACAw0iFB' class=''>splCmdDeg: collective spoiler command in degree
+
+<br/></li><li id='JfRACAFa08E' class=''>vertGustMps: vertical gust disturbance in meter per seconds.
+
+<br/></li></ul></div>The commands in degrees are converted to radians inside the Aquila_model block.<br/>
+
+The aircraft linear model (Aquila_Lin_Model) <i>outputs</i> are (more details are provided in Aquila_Nonlinear_Simulator_Manual - the below list is the default sequence) - note that the C, and D matrices for the output list below at the IMU node are computed when the node index chosen is node_idx: 1: IMU node (see below for choosing other aircraft nodes across the wing span)<br/>
+
+<div data-section-style='6'><ul id='JfRACADttYb'><li id='JfRACApjjIV' class='' value='1'>P_N : aircraft north position (in flat earth coordinate system)
+
+<br/></li><li id='JfRACA2HDEd' class=''>P_E : aircraft east position (in flat earth coordinate system)
+
+<br/></li><li id='JfRACAHWsNU' class=''>pres_alt_m: altitude in meters
+
+<br/></li><li id='JfRACAmeElG' class=''>tas_mps: True AirSpeed (TAS) in m/s
+
+<br/></li><li id='JfRACAaDsHJ' class=''>phi_rad: bank attitude measured at IMU node in radians
+
+<br/></li><li id='JfRACAaEdLc' class=''>theta_rad: pitch attitude measured at IMU node in radians
+
+<br/></li><li id='JfRACAInDth' class=''>psi_rad: mean axis heading measured at IMU node in radians
+
+<br/></li><li id='JfRACAfKVwX' class=''>p_radps: roll rate measured at IMU node in radians/s
+
+<br/></li><li id='JfRACAZbiCa' class=''>q_radps: pitch rate measured at IMU node in radians/s
+
+<br/></li><li id='JfRACAaIiks' class=''>r_radps: yaw rate measured at IMU node in radians/s
+
+<br/></li><li id='JfRACABqVDI' class=''>vn_mps: aircraft north velocity measured at the IMU node in m/s
+
+<br/></li><li id='JfRACAcyYDc' class=''>ve_mps: aircraft east velocity measured at the IMU node in m/s
+
+<br/></li><li id='JfRACA7OBZK' class=''>vd_mps: aircraft down velocity measured at the IMU node in m/s
+
+<br/></li><li id='JfRACAHeTcH' class=''>a_x_IMU_mpss: aircraft acceleration measured at the IMU x-axis m/s/s
+
+<br/></li><li id='JfRACAKKr03' class=''>a_y_IMU_mpss: aircraft acceleration measured at the IMU y-axis m/s/s
+
+<br/></li><li id='JfRACAfIdow' class=''>a_z_IMU_mpss: aircraft acceleration measured at the IMU z-axis m/s/s
+
+<br/></li><li id='JfRACA9QC2x' class=''>StatPres_Pa: Static pressure
+
+<br/></li><li id='JfRACAsWBkf' class=''>DynPres_Pa: Dynamic pressure
+
+<br/></li><li id='JfRACAX8eKQ' class=''>OAT: outside air temperature
+
+<br/></li><li id='JfRACAZLGLl' class=''>eas_mps: Equivalent airspeed
+
+<br/></li><li id='JfRACAUjCc2' class=''>aoa_rad: aircraft angle of attack in radian referring to the mean axis
+
+<br/></li><li id='JfRACA3SxtG' class=''>aos_rad: aircraft angle of sideslip in radian referring to the mean axis
+
+<br/></li><li id='JfRACAv9g0D' class=''>velBdy_x_mps: TAS component in the x-axis of the mean axes coordinate frame in m/s
+
+<br/></li><li id='JfRACA0jnGU' class=''>velBdy_y_mps: TAS component in the y-axis of the mean axes coordinate frame in m/s
+
+<br/></li><li id='JfRACApDhzI' class=''>velBdy_z_mps: TAS component in the z-axis of the mean axes coordinate frame in m/s
+
+<br/></li><li id='JfRACAzBMgs' class=''>gama_rad: flight path angle in radians
+
+<br/></li></ul></div>Model reduction tool script “ModelReductionTool” can be used as a standalone file to reduce the order of the original aircraft linear model by using the following methods:<br/>
+
+<div data-section-style='6'><ul id='JfRACAOSNFl'><li id='JfRACAL5Uji' class='' value='1'>Simplification by pole/zero cancellation
+
+<br/></li><li id='JfRACAgxvBz' class=''>model reduction by states as truncation
+
+<br/></li><li id='JfRACAgrU7z' class=''>model reduction by states as residulization
+
+<br/></li><li id='JfRACAaZVDb' class=''>model reduction by using canonical forms and similarity transformation  
+
+<br/></li></ul></div>Currently, flexible modes of the aircraft can be seen in the pole-zero plots and the frequency responses plotted by the tool – Some detail is provided in the design review presentations in which the flexible mode pole pairs are identified. The flexible modes states within the model are also defined in the Aquila nonlinear model manual. Information regarding the flexible mode shapes are also plotted which are useful for optimal sensor/servo placement -<br/>
+
+<h2 id='JfRACA2LmE1'>ASWING Model Import</h2>
+
+To use an ASWING model imported previously imported in Module 1, set the following options in OptConfigSetup.m<br/>
+
+<div data-section-style='5'><ul id='JfRACATzleN'><li id='JfRACAgvAQH' class='' value='1'>Opt.UseCustomModel = 1
+
+<br/></li><li id='JfRACApKawz' class=''>Opt.CustomModelName = 'model_name'
+
+<br/></li></ul></div>where 'model_name' is the name chosen when importing the model in Module 1.  Using this setting will load the state space model imported from ASWING and insert it into the Simulink model.  This setting will also skip many of the Module 3 steps that require known system states, as the Aswing model is in a modal form.  <br/>
+
+<br/>
+
+Note that during the import, a second simulink model “linearModel.slx” is also populated with the new state space system.  This model is not connected to the control loops, and can be used for stand-alone open loop testing of the imported system.<br/>
+
+<h2 id='JfRACAkvJAY'>Detailed Operation and Execution</h2>
+
+There are a number of pertinent files within the toolbox utility folder which must be set up first. The first file to modify is “OptimiseAquilaClaws_Main.m” — The script starts with a call to an initialization script “OptimiseAquilaClaws_init” which provides preliminary initialization for the Simulink model parameters and coefficients as well as sets the path.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:700px; height:270px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/gt5mze3Guj1lX_3gx0YvKA?a=CCscwRH56yhM3TL3tT4oaJAaYz4N8vPHOe8cht7aMAYa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA2lOqK' alt='' width='700' height='270' class='masked-image'></img></div></div><br/>
+
+To specify if the control laws design is carried out over multiple flight conditions or just one, the “<code>Optimize4MultipleFlts</code>” parameter should be set. If TRUE, the control gains tuning is performed over multiple flight conditions. In case, the user is unfamiliar with a flight condition, it specifies the altitude and airspeed at which we are operating at as well as flight path angle (gamma) and bank attitude (phi). For now, we have the options to check multiple altitudes and airspeeds with a single gamma and phi but might offer the option to do the gain tuning over multiples gamma's and phi's in the future as well.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:462px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/mybXM7uFg2vrv4oP0akmKA?a=OBuak4aWwdlcgNLM59MTxpg74BjTt5bBoc75ekcv34Qa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA2Ya1M' alt='' width='800' height='461' class='masked-image'></img></div></div><br/>
+
+Another option, “<code>Options.ReadFltCndFrmCSVFile</code>” specifies whether the user has set their flight conditions in an input file named “FltCndInput.csv.” In this case, that option is set to FALSE and instead, the desired flight conditions must be specified in the Main file directly as follows:<br/>
+
+<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:402px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/sYajOOgY3yS5wYrCLvhHhg?a=4a78WinKCsCYCXiRlpCPegbA03Zx4K1bFGaYmOoZRzQa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAD3OKE' alt='' width='800' height='402' class='masked-image'></img></div></div>We have specified two altitude conditions in flt.alts field, two airspeed condition in flt. eass field, and one gamma and one phi condition in flt.gammas and flt.phis fields, respectively.<br/>
+
+<br/>
+
+Also, the flight conditions can be specified in an input file such as “FltCndInput.csv” when the switch “<code>ReadFltCndFrmCSVFile</code>” is TRUE, the flight condition input file looks like the following picture:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:600px; height:256px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/W0tVG_Z8otk8jNbu1E3lUQ?a=1gwPareRCgcVuc2b3xlmqvXvJBF4nnbQf1MaKqPQsTca' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAC9HDy' alt='' width='600' height='256' class='masked-image'></img></div></div><br/>
+
+Note that some columns can have more elements than others. The file is read column-wise and each column is turned into a vector of flt.alts or flt.eass, etc.<br/>
+
+<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:654px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/9XnrC4g8WID-Gk8wAWFgCw?a=RalrUVAPfKmJbdXa73NcSUVlL5pVHyaTdqzjuEun194a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAlDrhe' alt='' width='800' height='653' class='masked-image'></img></div></div> Also note that in each of the two conditions (whether control design is carried out over multiple flight conditions or just one flight condition, it is specified which loop(s) need the tuning by setting the “Options.OptConfig” field. As an example, looking at the above setup of the script, it's set to optimize over multiple flight conditions; and line 58 shows that 8 loops will be tuned. If line 58 is commented out and instead line 59 is commented back in, only two of the control loops i.e. PitchLoop and ClimbRateLoop are tuned. Finally, the end of the file looks similar to the following:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:101px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/Fjp-Gi16OQZgH1CkoRD7hg?a=A7QW9O37uH6oVla8yi1zsIZX1aRlqPKHJlesGryfu9Aa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAPpKdP' alt='' width='800' height='101' class='masked-image'></img></div></div>Here, the appropriate optimization routine is called. <b>Here you can also see another important input: the model.</b> In the case of multiple flight conditions, the model is “LinLongNormal_Aquila_ClawsGainSchedule_Discrete”. In the future, you may want to analyze a different model and therefore put a different model name in its place.<br/>
+
+The call to “OptimizeAquilaClaws_Discrete_GS” starts a control design optimization routine to tune the control laws gains and parameters and we will now take a look at its outputs.<br/>
+
+<br/>
+
+<h3 id='JfRACAld0p4'><b>Outputs - Plots</b></h3>
+
+Among other things, the control design routine results in a number of useful plot:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:634px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/ScYF6feuixYpp5lBuNzinw?a=LOoKUe9YLH6nNHgbgR93Xhx0cfRNDNDDYpFTiLb8Zn0a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACALHhtE' alt='' width='800' height='633' class='masked-image'></img></div></div>The above picture illustrates a gain surface plot for the numerator coefficient of a lead filter in the pitch rate loop tuned over several flight conditions. The surface shows how this coefficient trends over different flight conditions, specified by Dynamic Pressure (associated with eass and dynamic pressure) and altitude. While this plot might be visually descriptive, we want a more organized way to quickly get a number for a given combination of flight condition, control loop, and tuned parameter and perhaps output all the numbers to a data table.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:455px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/Xl4iVwlszLF1FE7V_gpiXw?a=jnKFNKMbRzhugdacRN0ziASacQcRKBW55SRllGGZYb0a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACABzMfw' alt='' width='800' height='455' class='masked-image'></img></div></div>Above we see a Viewspec plot. This plot compares the tuned loop performance against the time and frequency domain requirements for every tuned loop. Note that each subplot has multiple blue curves. This plot produces a curve for every associated flight condition. The top subplot also has multiple green and red curves indicating, Corresponding to the Sensitivity and Complementary Sensitivity for each flight condition as well. Then there are also regions and dotted lines that indicate the designer specified performance requirements. While these plots might be visually descriptive, they present an organizational issue. With these alone as outputs, it is difficult to obtain some detailed information such as crossover frequency associated with a specific flight condition (should manually deploy cursor to read the crossover frequency). To address this, as well as organizing the data from the Tuned Controller Gain and Filter Coefficients Surfaces, a tool has been developed which organizes all this data into organized data structures and offers the capability to output a data table:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:142px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/Y7mG0DyDD7OfSBaZYD4Uow?a=nFhz1Nk9jxxDMjV5V8LoSCwaEdgCCAeGFsIwZly5y8Ia' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA5i5kv' alt='' width='800' height='142' class='masked-image'></img></div></div>It's shown that each row of the above table corresponds to a single flight condition (a unique combination of altitude, airspeed, gamma, and phi) and each column corresponds to metrics such as tuned gains associated with each loop and flight condition, as well as resultant performance characteristics. Later in this chapter, a Class object called “TunedCondition” which, among other things, contains all of the data that is output in each row of this table, that is, there is one TunedCondition object and resulting data structure for every flight condition.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:159px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/rMIKG123Bt_IpK_EekNWog?a=pgSaYEejP1XA5O2Fjq1l87QSd9GBmRPGX4J9I7NXaeUa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA1hzsC' alt='' width='800' height='158' class='masked-image'></img></div></div>Next, newly defined data structures are defined that have been designed to get these metrics, organize them, conduct analysis upon them, and output presentable data tables.<br/>
+
+<h3 id='JfRACAMi6T6'><b>Outputs: Organized Data Structures<u> </u></b></h3>
+
+The Optimization script creates a Matlab file called “OptOut,” which contains a TunedPointGenerator Object called “OptClaws.” The following contains instructions on how to extract information from this object, how to operate on different data structures contained within that object and how to get presentable data tables:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:13px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/z_rcYZa_jGUkUuC3V1uqZg?a=gp887QlE9oNgD2stfagZpRuYF5IDRfkntCprquEa6x4a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACACJQvh' alt='' width='800' height='13' class='masked-image'></img></div></div><div data-section-style='19'><div class='image-mask' style='width:800px; height:151px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/OZk1gn5Kx0c8txcBnVC_7A?a=MnRNijq5P656ROuikhfQZFoRfbnsa8TTow9mDjN7meUa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAaGKdT' alt='' width='800' height='150' class='masked-image'></img></div></div>OptClaws has several properties including Sltuner_interface, FlightConditions, etc which are described as follows. “Sltuner_interface” is the systune object. “FlightConditions” are the flight conditions specified at the beginning of the Main script:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:420px; height:281px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/prY6wO8eJbDREa-j22UUmQ?a=ecc7mcyHgozqCsGKffJo5e6QZlvApzzwBaeUbhjY1UIa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA3eSlb' alt='' width='420' height='281' class='masked-image'></img></div></div><br/>
+
+<code>LoopStruct_list</code> is a cell array of LoopStructs, each of which contains the information to specify critical metrics of a tuned control loop. TunedCondtions is a list of data structures that each correspond to one of the unique combinations of flight conditions. If there are 2 altitudes, 2 airspeeds, 1 gamma, and 1 phi, there would be 4 unique combinations and therefore 4 TunedCondition structs in the list.<br/>
+
+“OptClaws” also has Class methods, some that are run in the optimization script, and some that can be run externally to analyze the output:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:164px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/skdefJXeGMXvZVXRpdX5ug?a=0V4tygkka52yUVfFDxuSMxhVZRx7kSoFw3hz6mfZh4ka' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACALFnsU' alt='' width='800' height='164' class='masked-image'></img></div></div>“OptClaws.getCombinedFlightTable” outputs a table where each column is a pertinent metric, whether it is a tuned gain, filter coefficient, or performance metric of a control loop such as PitchLoop_Overshoot. Each row corresponds to a single flight condition, in this case indicated by the first four columns. Note that the above table is associated with four flight conditions (rows) and has 99 metric columns after the flight condition columns (4x103 table).<br/>
+
+ <br/>
+
+Another method writes this output table to a csv file with a specified name:<br/>
+
+Now a file called “TestCSV.csv” should be in your current directory. Remember to add the “.csv” portion to the file name input. The spreadsheet contains combined information :<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:68px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/9gKguXmXTkrxY0cIZEDVQg?a=eDj3nIeiOCKmoReaOFWPqWToiEPXCscsQIKIqF7aGZga' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA0QdXN' alt='' width='800' height='68' class='masked-image'></img></div></div>OptClaws is instantiated in the Optimization script as follows:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:41px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/3-MspThdXGhdLoQU_flQMQ?a=vnBVRM6aFHG3ZaXLNtaoJ6TQqPy4sW8BD7FJPqMXGLka' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACACDe94' alt='' width='800' height='41' class='masked-image'></img></div></div>In line 952, the object is instantiated. As described above, it is instantiated with a property “TunedConditions,” which starts out as an empty list. Then in line 953, the class method “PopulateTunedConditions” is called which combs over the different combinations of flight conditions and creates a TunedCondition object for each one. Then it places a struct associated with each TunedCondition object in the list.<br/>
+
+<br/>
+
+<h3 id='JfRACAG3tpI'><b>Tuned Condition Structs</b></h3>
+
+This section, go a level deeper and analyze the components of the list, TunedConditions. As described, there is an element for every flight condition (every row of the output table) and so in this case there are 4 elements in the list:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:420px; height:287px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/wTaJ4QDiWiz7gIQsf9UpJw?a=zffnS6CLQ8cpBoM1oYKKV4AP6WSoEiNMqvknCh0a8t4a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAuQcIo' alt='' width='420' height='287' class='masked-image'></img></div></div><br/>
+
+We can see that each element has some fields. Indices help us specify which flight condition we are associated with when searching for data among a group of data for each flight condition. FlightCondition is the associated flight condition. Note, whereas the TunedConditionGenerator has a property, FlightConditions,  which is a list of multiple flight conditions, this FlightCondition is just one associated with the Tuned Condition in question.<br/>
+
+Coeffs is a struct that contains all of the tuned gains and filter coefficients associated with that flight condition. For instance, if we look at field “Coeffs” in the TunedCondition struct:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:570px; height:452px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/5DmLUd9XNAw9faRC0-Gufg?a=XLRmUdsDmnPh6HzaNofife9lTPWsjM3YHk1eDaPiqpUa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAWnDxr' alt='' width='570' height='452' class='masked-image'></img></div></div><br/>
+
+The fields go further down but not all have been included. A specific gain or filter coefficient in the list can be found by:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:720px; height:220px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/RXyUcK6Z7QgIi0zK_X5OMw?a=mkA1hXGwDjdz7iWtpw8Kz1LhroaHXavaRUwJ2DjBHbIa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAJkL5C' alt='' width='720' height='220' class='masked-image'></img></div></div><br/>
+
+And then select one:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:504px; height:118px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/-hnLRFdb4hArsaiPAF_eWg?a=UasxJa4tHauPAtsui5bJbVKaRA1vFJEzwbRI0aheXhAa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAcnuiy' alt='' width='504' height='118' class='masked-image'></img></div></div><br/>
+
+Another field of TunedConditions is “CompleteTable”. This is going to be one row of the multi-row table output above from OptClaws.getCombinedFlightTable:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:113px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/In0UOQyr4_41sttuybDd8A?a=mdKfQggfRo85NWsOfii6vD7ksOjeNKjFKrKO274U6zsa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAjX4Nz' alt='' width='800' height='112' class='masked-image'></img></div></div>Finally, the last field of TunedConditions is SLTunerLoops:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:570px; height:385px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/TJNiKZMLgkKugsx0OB6VsA?a=ZcGeW4Gsi78RnZ41xYJXe8osPsj2fsPULGw0ShMIMu0a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAFlGNK' alt='' width='570' height='385' class='masked-image'></img></div></div><br/>
+
+This a struct that contains each tuned loop object as a field. Next section explains what a tuned loop object looks like.<br/>
+
+<h3 id='JfRACA4D1NH'><b>Tuned Loop Object (SubLoop)</b></h3>
+
+Let’s look at a given tuned loop object in SLTunerLoops, for instance, the PitchLoop:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:570px; height:383px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/3z7cX27dmys3Zax5Gtjyfg?a=v5iQa4nGQNAFFabF2abaRoiLaTwaxa9QPWjZaD83WWQa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAkdadj' alt='' width='570' height='383' class='masked-image'></img></div></div><br/>
+
+A given SubLoop object (in this case PitchLoop) is instantiated with a SubLoopStruct. This struct has all the info necessary to help SubLoop calculate critical data and metrics. It has a CL property (closed loop transfer function) for that loop and flight condition. This CL is chosen from a group of CLs that is created when the following command is executed:<br/>
+
+<br/>
+
+<code>CLgroup=ST1.getIOTransfer(‘PitchLoopInput’,’PitchLoopOutput’,PitchLoopOpenings)</code><br/>
+
+<br/>
+
+The result of this is an array of transfer functions, one for each flight condition. If we set:<br/>
+
+<br/>
+
+<code>CL11=CLgroup(1,1,1,1)</code><br/>
+
+<br/>
+
+Then CL11 will be the CL associated with the PitchLoop of the TunedCondition for the flight condition combining the first gamma, phi, altitude, and eass. CL can be used to get step response characteristics as well as other info.<br/>
+
+L is the loop gain transfer function and can be used to get frequency response characteristics such as crossover frequencies and classical margins.<br/>
+
+MarginsInputTF and MarginsOutputTF are transfer functions for the loopmargins analysis.<br/>
+
+ViewSpecSubStruct is a struct that contains the data extracted off of the corresponding viewspec curves and is used to help verify that the metrics associated with this SubLoop are in agreement with the ViewSpec curves.<br/>
+
+"StepInfo” has the same results as that of the call:<br/>
+
+<br/>
+
+<code>stepinfo(OptClaws.TunedConditions(1).SLTunerLoops.PitchLoop.CL)</code><br/>
+
+<br/>
+
+So the overshoot, risetime, settling time, etc of the loop can be double checked.<br/>
+
+Crossover is the crossover frequency or frequencies of the loop if there are multiple.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:158px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/qI-o1aWRy0DnTBk5p4arbg?a=wZDNxcgbF4msaRLljC3W7WXghkwmQhTOWe4QCRMsHHga' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAfZyF9' alt='' width='800' height='157' class='masked-image'></img></div></div>As the above picture illustrates, the cursor has hovered as close as possible to the crossover frequency; It can be seen that it is close enough to the crossover from the PitchLoop SubLoop object, 0.1898 rad/s. Because we only get a discrete set of points on the ViewSpec plot, we skip over the crossover frequency but we can see that the cursored point and the next point bound the crossover frequency output by the SubLoop object.<br/>
+
+Last Crossover is the last crossover in the case of multiple crossover frequencies and the only crossover frequency in the case of a single crossover.<br/>
+
+There is also a property called PerformanceTable which starts out as an empty table and has been populated with the desired metrics:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:128px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/sFiT_fR5zSpYSV93a66bXw?a=pPgIn2OIH1UkiUBHnSYWRiVRtCZo5JpkJNXxklmPgw4a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA0sqJU' alt='' width='800' height='128' class='masked-image'></img></div></div>This SubLoop object also has class methods. For instance, if one wants to get data vectors to represent the step response of this loop and this flight condition, the following command can be run:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:22px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/Sf0vzRMzjxysNU1y_EaQTQ?a=FnJiiJ37Dqy2wpH2MeD2vcRkDa8Uio2L9Qek2698VuUa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACApfo5q' alt='' width='800' height='22' class='masked-image'></img></div></div>Now the data vectors representing the step response details are available for any analysis. Note that the argument, 300, is not necessary. If it is not set, the step response data will terminate at a default defined by the Matlab “step” command. In this case, we have specified that we will terminate at time t=300. It can be verified that this is working as expected by:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:62px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/7KbLL2nfqAQOywD6n3LDrw?a=r358aaArM01Oy3JuYUWwyw14nvtC0drZS0mUXx9qvrwa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACANDK3M' alt='' width='800' height='61' class='masked-image'></img></div></div><div data-section-style='19'><div class='image-mask' style='width:800px; height:520px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/xrcMiUdzSUC1PtmNV3f9JA?a=NTaHC7jaFY0N0Xfr7W0YNyzTN9Z0ZzwcWd1YD6yCRPsa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACASD6nF' alt='' width='800' height='519' class='masked-image'></img></div></div>Note that this plot can also be produced by calling:<br/>
+
+<code>step(CL)</code><br/>
+
+where CL is the property of the appropriate SubLoop object.<br/>
+
+The frequency response data can be also obtained as follows:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:38px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/fC6CkLVcWhP8iX_2LAAR5Q?a=NKpo7yIsdvQGTFfC06aS0YO5gT8jNRXpyblp7Kz8pMIa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA6iqfd' alt='' width='800' height='37' class='masked-image'></img></div></div>There are now 3 vectors containing magnitude parametrized by wout, phase parametrized by wout, and wout. Note that the input vector is set to w otherwise, the data is parametrized by the defaults of Matlab's “bode” function. Just to verify the results of the frequency response, the bode plots can be plotted from an alternative approach by using the saved data:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:164px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/pAIA-SgmKFGJdDPv2tyTBg?a=nw6rkSBSphzQVTnspZVXUlz4VHqLTWEOIQy1f5jhJOwa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAfcn2p' alt='' width='800' height='164' class='masked-image'></img></div></div><div data-section-style='19'><div class='image-mask' style='width:800px; height:439px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/TG5VDkcDUUfxMyWLQA5vyw?a=bv8IbkXZxN4Ff9tiVsigIaViJsZDd4C6OAqqFRePO4ka' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAjObs9' alt='' width='800' height='439' class='masked-image'></img></div></div>Data can be analyzed in the vectors directly for different properties as well.<br/>
+
+Classical margins can be obtained as follows:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:24px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/DR1x4cCJ-M5S-x3scYhYUw?a=NI6kf1LHa4hhggJvPX1nKzATCqwlnDaRiWNoyP18WtQa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAGIN8n' alt='' width='800' height='23' class='masked-image'></img></div></div><div data-section-style='19'><div class='image-mask' style='width:800px; height:338px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/wCyRmoA67ZxurzMyCCvmUw?a=NaeFtLso2o90XMLEUpchlsm6KeP1mjrOYwp4sITPyf8a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA8L2c1' alt='' width='800' height='338' class='masked-image'></img></div></div><br/>
+
+<h3 id='JfRACABhQT0'><b>Modifying Code: Adding New Info and Outputs to Table</b></h3>
+
+<br/>
+
+There may come a point where you want to add some functionality to the code. That functionality may not require any more data than you are already given in a TunedCondition or it may require adding data. We will look at both cases.<br/>
+
+<br/>
+
+<b>1) Adding Data/Info to TunedConditon</b><br/>
+
+Right now, we can calculate step response and frequency response metrics and put them in the output table because an upstream function added a CLgroup and Lgroup to each LoopStruct in LoopStruct_list which was passed down. Given appropriate indices, CLs and Ls in these groups were passed into their corresponding tuned Conditions and we could then operate on them to get relevant metrics.<br/>
+
+Let’s say we want to add a new metric to the table but we have not given the LoopStruct the tools to calculate that metric. For example, let’s say we do not have enough info in the LoopStruct to pass down information regarding Sensitivity such as peak sensitivity and the corresponding frequency. We want to add this functionality:<br/>
+
+First we will navigate to the class TunedLoopGenerator.m and go to the method, “ReMakeLoopStruct.” This method modifies the way information is made available in each LoopStruct in LoopStruct_list. In this case, we are going to add fields to each LoopStruct that explicitly define information relating to Sensitivity:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:494px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/xvyo2y_Ogkba7vdjFr23kQ?a=GancjwolvQk4plGskmgu2P7vxjhUoz6D1G42aDXI7A0a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAER55m' alt='' width='800' height='494' class='masked-image'></img></div></div>continuing to...<br/>
+
+<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:321px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/u4-puqe8olqY9Pz6VTaM0g?a=c9cZKPzRt8mMA0adzkNLtIRLT1mbYnab1nDQis7hQIoa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA8YyvC' alt='' width='800' height='321' class='masked-image'></img></div></div>Note that within the body of the for loop, there is a bold set of comments that instructs the user to add further functionality there (line 101). If the user wants to add Sensitivity info, they will have to define their Sensitivity Loop in each LoopOptObjectives file. For example, let’s look at PitchLoopOptObjectives.m which already has a Sensitivity tuning goal defined:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:82px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/MQNekY44Vx-uXIXmwjz2Zg?a=ZyW61kkSezXr2rjSpl7sG5Y7eG66BSgOoC5POxKEENoa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAXyqqZ' alt='' width='800' height='82' class='masked-image'></img></div></div>Later in the file, this tuning goal is added to a list:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:15px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/7ZT4GQOIfMveF3ggMT2VRA?a=1c7hPARTkx4U9H4Bkeh2h9NjyM7nFSi8gmuNQXr6h6Qa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA1KnJZ' alt='' width='800' height='15' class='masked-image'></img></div></div>Which is passed into the LoopStructs:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:764px; height:184px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/tYSuU6f_TL_W4MDPlmOxIA?a=lsZ1FAXZVoJBMkFjGkaGtk39tV5KeIKsykE5DOHvgw0a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACArrF2D' alt='' width='764' height='184' class='masked-image'></img></div></div><br/>
+
+Now to modify the LoopStructs and add useful fields for Sensitivity analysis we can go back to TunedConditionGenerator class method “ReMakeLoopStruct” and will have to modify this function as follows:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:255px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/0-3eEDgtqpB_0Gw5HW8UlA?a=CD4QW9rjM0GxdQ5FaaHEhaxLy123najYMmc3xjpsDLYa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAksFzw' alt='' width='800' height='254' class='masked-image'></img></div></div>Within the body of the for loop, we have defined a condition that extracts any existing Sensitivity info from each LoopStruct’s TuningGoals_list and places it directly as a field of the LoopStruct. One of these fields is “SensitivityTFgroup” which is an array of Sensitivity transfer functions, one for each flight condition. For example, LoopStruct. <br/>
+
+<br/>
+
+<code>SensitivityTFgroup(1,1,1,2)</code> will give you the Sensitivity Transfer function for the 1st gamma flight condition, the 1st phi flight condition, the 1st altitude flight condition, and the 2nd eass flight condition for the LoopStruct in question which could be and control loop such as PitchLoop. <b>One note for the user: the top line in the conditional is commented out and is an alternative option for defining the Sensitivity openings that are used to define the sensitivity transfer function. It is up to the user to decide which Sensitivity transfer function they would like to see based on how conservative they want the estimates of sensitivity to be.</b><br/>
+
+ <br/>
+
+Now our goal is the pass a single Sensitivity transfer function (“SensitivityTF”) from SensitivityTFgroup into an appropriate SubLoop and therefore TunedCondition struct. The way we do this is by navigating to the SLTunerLoop.m class. In this class we find a number of “Add” methods that help us Add information to specific SubLoops and therefore TunedCondtions. For example, lets look at the following method, “<code>AddCL</code>”:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:285px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/rocjN0y6xOmFabsFVpI_dw?a=OTXGMwTDwALuUMO8xAjjcy9bAy5zJBmf2Xnk9VNqF8ca' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAAux4h' alt='' width='800' height='285' class='masked-image'></img></div></div>Given a set of indices that correspond to a flight condition, we can modify an old SubLoopStruct and output an updated one that can be used to instantiate a SubLoop object. In this case, that updated SubLoopStruct now contains the appropriate single CL transfer function from CLgroup.<br/>
+
+ <br/>
+
+Next, we will write our own “Add” method for passing down a single Sensitivity TF. There is a location lower down that indicates where to add new “Add” methods:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:102px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/qJVpTh55UAa2X18VrXr5sQ?a=LKZPUvnGrzal8dHa6Y4YiayTq8a2fSIkgdsTYexHk1Ua' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAoBktX' alt='' width='800' height='102' class='masked-image'></img></div></div>We write this method with a similar structure to that of “<code>AddCL</code>”:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:404px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/qCjrMdDB7ohAh5m2kM4suQ?a=WCuUaYwLsZOf4k62Gt9CGTzEDex7rnVUIMZxvxShUr8a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAaGn7C' alt='' width='800' height='404' class='masked-image'></img></div></div><br/>
+
+Note that unlike the <code>AddCL</code> method, this method checks if <code>SensitivityTFgroup</code> is a field of the class property, “LoopStruct.” This is because while all “LoopOptObjectives.m” files have the necessary info defined to get an array of  Closed Loop transfer functions, not all of them have Sensitivity location and openings information defined. Right now, only RollLoop and PitchLoop have them defined, and therefore only the SubLoop corresponding to RollLoop and PitchLoop will be instantiated with a SubLoopStruct that has a field <code>SensitivityTF</code>. Now we have a method in place to add single Sensitivity TFs but we have to ensure that it is called in our implementation so we have to add one more command. If we go slightly lower down, the SLTunerLoop class method <code>getSubLoopStruct</code> is called:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:230px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/wSzN8xLBrbQKGIlZAgEVuw?a=qDNjhOVzeYSgYwkjWtRiPgMnAtErwf8aAaTNZY2hu8Aa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAOszH4' alt='' width='800' height='229' class='masked-image'></img></div></div><br/>
+
+This function calls of the necessary Add methods to create a SubLoopStruct which can be used to instantiate a SubLoop object. Note the bolded comments indicating where to add more “Add” methods. We can add a command there:<br/>
+
+<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:244px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/OtSNVAUzFLFm0agcw-09eA?a=gNQdXykahsCa2Ss7TxJsInAKJ14aMiIAlUAhnVpLFXUa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAnWBBo' alt='' width='800' height='244' class='masked-image'></img></div></div>The added line modifies the SubLoopStruct used to instantiate a SubLoop object so that it has an associated Sensitivity transfer function if the appropriate locations and openings are defined on the associated LoopOptObjectives files.<br/>
+
+ <br/>
+
+Now that we have modified the SubLoopStructs that will be used to instantiate SubLoop’s accordingly, some SubLoops now have access to a Sensitivity transfer function and we can add methods in the SubLoop to calculate different metrics associated with the Sensitivity. For example, we may want to get the peak sensitivity and the corresponding frequency and then add those to the table. If we navigate to the class SubLoop.m we can see some “Add” functions, which when called, calculate certain metrics and add them to the SubLoop’s property, “performance table.” This table is later inserted as part of a larger table for all loops and all flight conditions. Below we can see the “AddFrequencyResponseMetrics” method of the SubLoop class:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:428px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/-PKS9Pl2ECNy892d1nrgRA?a=iuEK2eRDjaJ0IUjq6sakh4TmoBYx0VbHDIKS72InwVMa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA4gKAJ' alt='' width='800' height='427' class='masked-image'></img></div></div><br/>
+
+This method specifies a cell array of metric names, which in the output table would follow the name of the associated loop. For example, the first metric name is “Crossover” so the associated column in the output table for the PitchLoop for would be titled “PitchLoop_Crossover.” We then go on to calculate the metrics associated with each name in the names cell array. Finally, we call the “AddMetricToTable” SubLoop class method to modify the PerformanceTable property to include the new metrics and associated labels.<br/>
+
+<br/>
+
+Let’s now write a method to add sensitivity metrics write below where we are instructed to do so in the bold comments in the file (in above image: lines 145-148):<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:388px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/2IrKI5HH0oRYrx7OuKoyeA?a=sHOBeOSivbWz4RxhrhbMFMY2aY2eUR10gIp0nyKzLfYa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAdv631' alt='' width='800' height='388' class='masked-image'></img></div></div>Finally, we need to make sure this new method is called so the metrics are added to the SubLoop’s performance table property. We do so by navigating to a slightly lower SubLoop class method, “<code>PopulateTable</code>,” and calling the new method below the bolded comments that indicate to do so:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:111px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/0JwhL8lhvGW2URhg4y9TeA?a=W64EHKwDiZyhlkPcoTj0se9tN0cHpTddX5375ENdfaga' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA7vulm' alt='' width='800' height='111' class='masked-image'></img></div></div> <br/>
+
+Now we can rerun the following commands:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:43px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/hCLv9lsEivia1R2dU48Thw?a=azqLPJsETGIhnH3DHFDkBREM6BKQS2pbMziKiaCyYKUa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACABjXuj' alt='' width='800' height='42' class='masked-image'></img></div></div>Note that in order to create the TunedLoopGenerator object, “OptClaws,” we need to have ST1, FltCondtion, LoopStruct_list, and “optOptions” available in the workspace. Alternatively, we can just run the full optimization script again and OptClaws will be created once we run “load(‘OptOut’)”. Once we call PopulateTunedConditions we can type the following:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:179px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/f-7v0QEN1Z0PqsQ2epGd-Q?a=KcSfOTrAHjvWUX0ztO5rH0AsR2haapw1L8PEalIjbbga' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAa2McG' alt='' width='800' height='179' class='masked-image'></img></div></div>Whereas before, the table that was output by this command was 4X103, this table is 4X107 which makes sense; we have added 4 more columns, 2 for the PitchLoop and 2 for the RollLoop, both of which have Sensitivity locations and openings defined in their respective LoopOptObjectives.m scripts:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:146px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/Wrz6bRUgu1JM1r8inesDHg?a=bMQqaPS7HXLpMeDnhqreoytdiqcRFTEaul5uqjEFaz0a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAtMofT' alt='' width='800' height='145' class='masked-image'></img></div></div>and continuing to...<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:144px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/2sNE5EXcC8Lp0ZZm59MDsg?a=l5sFh4paiVMDGNEorbhVgjHAVQcf37Nxjo4RcIzmQhYa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAAvIHL' alt='' width='800' height='144' class='masked-image'></img></div></div>We can navigate to the rights spots in the table and see both the PitchLoop and RollLoop performance characteristics have 2 new columns a piece. They each have a Peak Sensitivity column with values output in dB and associated frequency columns output in rad/sec.<br/>
+
+ <br/>
+
+<h3 id='JfRACAW56W3'><b>Modifying Code: Adding New Outputs to Table Given Necessary Info</b></h3>
+
+Sometimes we will have the easier task of adding performance metrics to the output table once we already have all the tools we need to calculate them in the SubLoop class. This is much easier since we only have to take the last two steps of the previous section to add a method and command in the SubLoop class. Whereas calculated Sensitivity metrics required going to upstream classes to define Sensitivity functions, each SubLoop object already has a property L, also a field of the SubLoopStruct property, and therefore, any metric based on L, can be directly added in the SubLoop class. For example, let’s say we want to add the Tracking Limit Magnitudes and the Noise Rejection Magnitudes: the magnitude a decade before the last crossover frequency as well as a decade after. We can go to the SubLoop class and then we have 2 options:<br/>
+
+<div data-section-style='5'><ul id='JfRACAValJj'><ul><li id='JfRACAPZnv9' class='' value='1'>We can write a new “Add” method that calculates these magnitudes and adds them to the table with the appropriate column headers.
+
+<br/></li><li id='JfRACAsid7r' class=''>We can add these metrics to the “AddFrequencyResponseMetrics” method because these would be considered frequency response metrics we always want to include.
+
+<br/></li></ul></ul></div> <br/>
+
+We will take option 2. The “AddFrequencyResponseMetrics” method currently looks like this:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:301px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/VfVV-tWsT7saBIZNHKWoXg?a=HzRablCZ2OarCINUztszbYdS20oob7T4V80do1I5HaEa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAaTio4' alt='' width='800' height='301' class='masked-image'></img></div></div>Let us now add the two appropriate headers to the names cell array and then calculate the associated metrics and put them in the 4th and 5th spot of the metrics cell array:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:538px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/LqwVdn8953V_bpkp0FKHXg?a=9PVF54P85qXWnwoHuqFByYvljwobyHR8LPqNqmapyesa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACARn6Or' alt='' width='800' height='538' class='masked-image'></img></div></div>Above is the modified method. Note that first, we added elements to the names cell array in line 128. Then starting in line 145 we calculate the associated metrics and add them to the metrics cell array in lines 149 and 150. Because we modified an existing “Add” method rather than created a new one, there is no need to add a command to ensure that the method is called later so that the metrics are added to the table:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:111px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/YiRvMEqaRWZjHrKgDmKweA?a=MW9Re10duYvJVZ0EDZrgSpSzRaTa3MMP7wTcuC86kU4a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA7bRe5' alt='' width='800' height='111' class='masked-image'></img></div></div>As we can see, the “AddFrequencyResponseMetrics” method is already set to be called in the “PopulateTable” method so, to reiterate, we don’t need to make a change down here. Again, we can run the following commands and see the new output table:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:49px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/-efUvSUutSuTysa3E2WcFg?a=dQYbFt1KGJiaKQJhjgvy42TjravIA8gEAQQpP3N8xKQa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACATyVxr' alt='' width='800' height='49' class='masked-image'></img></div></div><div data-section-style='19'><div class='image-mask' style='width:800px; height:265px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/SuxdwlHcPhA_tp5sEQ-grA?a=nHJaIUiN8tb04mn7SvVFDM2OjVGub0IWQzeEgKLj7pka' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAYsNRW' alt='' width='800' height='265' class='masked-image'></img></div></div>We can see that the table is 4X123 whereas before it was 4X107. This makes sense since in adding 2 metric columns per loop (there are 8 loops right now), we have added a total of 16 columns. We can scroll further to the right to see that the metrics have been added for a given loop:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:188px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/oO7aNDFnrtPicCabiueQkw?a=nsovlYM8FYgLIYnMGA3fKEN9vpAaHgb3a7oKSbEWTRAa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA03Czb' alt='' width='800' height='188' class='masked-image'></img></div></div>Now, if we want, we can write a new output table csv:<br/>
+
+And a file with the name “NewOutputTable.csv” will show up in the current directory.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:662px; height:41px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/YNxnLCqXpq-WtdhNAyWSMQ?a=aiPS3BQkh0fsq2yaiZNWJkuEcaFS4qNiM17tz9oO2Ksa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAqsUdK' alt='' width='662' height='41' class='masked-image'></img></div></div><br/>
+
+ <br/>
+
+<h3 id='JfRACAqU1IS'><b>Adding Loops</b></h3>
+
+This section explains how to add a new control loop to tune. First, the new loop should be added to the Simulink model. Next a new LoopOptObjectives.m file should be created. Let’s say it's desired to add a new control loop called “DecrabLoop.”  Any other Loops LoopOptObjectives.m file can be used as a temple. For example let’s look at “AltLoopOptObjectives.m”:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:394px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/cybcDlhIDqS8ZP3Nw5Olfw?a=Y8w3Y9XYKzdqD7IlaajZ9S6ZytBwktfJVQo3tf0fuc8a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAmYGA2' alt='' width='800' height='394' class='masked-image'></img></div></div>and continuing to ...<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:447px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/Pjl9er8uM83Zsq_HH1bHYA?a=zexUTirNQxUTMg0EyEOAYFaPCoaxO2BeYCdBRLg8qKsa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAAmpzH' alt='' width='800' height='446' class='masked-image'></img></div></div>Now we can make a similar file “DecrabLoopOptObjectives.m”;<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:589px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/UpsFcFgmLi5-tCUyzcY_ow?a=bCFyAaruaUbaaW49Q0eGSe7KOtloB0Ska5o6sUqiJawa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACABNghD' alt='' width='800' height='589' class='masked-image'></img></div></div>Now that a new file for DecrabLoop has been created, we just have to make sure that this file is called and the DecrabLoop struct is added to the LoopStruct_list. This is done by going to “SetOptObjectives.m” script and add a conditional statement for the DecrabLoop that follows the template of the statements for the other loops:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:553px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/kAvcheMVF6WymsT5YtaDuA?a=gO0YNWs7jf2wtClnqa8rEf13Z0XsNmw8IKtZvjQ1LB0a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA0eqdh' alt='' width='800' height='553' class='masked-image'></img></div></div>Now that you have ensured that the DecrabLoop struct and objectives have been added to the necessary lists if it is included in OptConfig, it will also be included in the output table.<br/>
+
+<h3 id='JfRACAM5AR4'><b>Sanity Checking Results:</b></h3>
+
+The TunedConditionGenerator object has some methods for sanity checking that your results make sense and at least are in agreement with the plots produced by Hamid’s script. Please note that these methods do not cover every element that might show up in the output table, but they do check many of them. If you add metrics to the table, these methods will not check them but will continue to sanity check the metrics that they were written for. Therefore, I want to emphasize this as a sanity check and not a complete confirmation.<br/>
+
+There is a method for confirming all Crossover frequencies fit with the ViewSpec plots for the LoopShape tuning goals:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:664px; height:200px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/3QV3WaknF0g5FjEZdXsgmA?a=xp6IPi0a8VZXiCqOV1rYAoLWbhLNEYUeW6kXlvzZodYa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAg5AKF' alt='' width='664' height='200' class='masked-image'></img></div></div><br/>
+
+This verification test outputs a struct that has some useful info for the sanity check. Since Fidelity_indicator is 1, the crossovers for every loop and every flight condition are in agreement with the ViewSpec plots. If Fidelity_indicator was zero, then the <code>Failed_TunedCondition_array</code> field would be a cell array with two rows, rather than empty. The first row would have the number of every tuned condition that had a failure, and the second row would be the corresponding loop that failed. This helps in finding the point of failure and analyzing what went wrong. Let's say that element <code>(1,1) </code>of the <code>Failed_TunedCondition_array</code> is 4 and element <code>(2,1)</code> is “PwrLoop.” Then we can go to:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:700px; height:41px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/yA72A_qF7HkyRPR8vbfWjg?a=WaQgTZkmn3idwX1gfWGsmNVt8KiiLROV2iG1NXahqyIa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAoGhdZ' alt='' width='700' height='41' class='masked-image'></img></div></div><br/>
+
+And do a more detailed analysis of that location and the associated ViewSpec plot’s crossover frequency.<br/>
+
+Then there is a verification method for the step characteristics. This ensures that each SubLoop of each TunedCondition struct has a step response that agrees well with the StepTracking ViewSpec subplot. Then it does a sanity check on the response characteristics such as Overshoot, RiseTime, SettlingTime, etc:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:681px; height:218px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/EsOYLDua_DEm5D-RMXh_Lg?a=1zGEaaPTYkJoUQINyTrbjE3ZMnbqYR1k5m9CTZuHeK8a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAgSuw8' alt='' width='681' height='218' class='masked-image'></img></div></div><br/>
+
+Again, since the output struct has a <code>Fidelity_indicator</code> of one, we have verified our step characteristics. If it were to evaluate to zero, we would look at the <code>Failed_TunedCondition_array </code>in which the first row would contain at least one failed TunedCondition struct index and the second row would contain the corresponding name of the failed SubLoop.<br/>
+
+Next, we have a method for sanity checking the gains and filter coefficients against the Tuned Gain Surface plots that the Optimization script outputs:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:606px; height:183px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/9Tpn-cXmVeMH--l949kORg?a=sGHK3Hkn856beLHeRanCi161aPoNpJKDPg5R90EL5Xca' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAFQyY8' alt='' width='606' height='183' class='masked-image'></img></div></div><br/>
+
+This result is similar to those of the two previous confirmation tests except that if the <code>Fidelity_indicator</code> evaluates to zero, and we have a failure, the first row of the Failed_Parameter_array will still contain the index of the TunedConditions that had failures but this time, the second row, will contain the full name of the gain or filter coefficient that did not match with the one on the associated gain surface plot.<br/>
+
+Finally, we have a method for Sanity checking all of these metrics at once:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:700px; height:249px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/HHYEl0yYyth_LFAdgEXgsw?a=oHYaY8kha7CRvat7qUNAdwSvdtaJ41MsSeq8HrqxQB8a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAQ3J14' alt='' width='700' height='249' class='masked-image'></img></div></div><br/>
+
+A <code>Fidelity_indicator</code> of 1 means that all of the previous methods have been run and each had Fidelity_indicator that evaluated to one, meaning that each metric checked, was in agreement with its respective point of comparison. In case, Fidelity_indicator evaluates to zero, we can step into the fields and see which ConfirmationStructs have fidelity indicators that evaluate to zero.<br/>
+
+Now we can write an csv table containing all of the metrics:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:643px; height:37px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/70hKTEJ2jRvfvHd5Glcamw?a=AAjSaEsnqc7mCMMaQ7DmpUPlltl3t5IaySFXZtDciowa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAqm8uD' alt='' width='643' height='37' class='masked-image'></img></div></div><br/>
+
+which writes the file “SanityCheckTable.csv” to your working directory. Instead of manually checking different elements in the file to do your sanity check, you can run the following:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:570px; height:229px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/iVCEJNha2aO0s20e9biuiw?a=GNZr0sEV9j52jzDa5UUCEAywradFEh0DOfBrg2uTPUUa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACANjY01' alt='' width='570' height='229' class='masked-image'></img></div></div><br/>
+
+This first runs the method to sanity check all of the metrics, and then compares those verified metrics to the elements in the csv file. If there is a failure (<code>Fidelity_indicator </code>evaluates to zero), we have the <code>CompleteConfirmationStruct</code> and can go a few levels deeper to see where the point or points of failure were.<br/>
+
+<br/>
+
+<h3 id='JfRACASirdz'><b>Extracting Data From ViewSpec Plots:</b></h3>
+
+ViewSpec Plots store data in a slightly different way than other plots, including normal subplots. Below are some instructions to extract X and Y data and characteristic names off of some ViewSpec subplots. Note that this goes pretty far to giving you what you need to know to extract any data but may not be exhaustive as it has not been tested on all types of <code>Tuning.Goals.</code><br/>
+
+ <br/>
+
+Below is a typical ViewSpec plot for the Pitch Loop of a system tuned on four flight conditions, 2 alts, and 2 airspeeds:<br/>
+
+<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:515px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/qX_5W-XKAoHf0lE0W9pFfw?a=Uav2zJTEgSELbBJBi4VTXW2zv2aYtI6owXYi0x7kH5Ia' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAXg629' alt='' width='800' height='514' class='masked-image'></img></div></div><br/>
+
+Note that if you put your cursor on one of the blue lines in one of the top two subplots, you can find out the x and y components at the point in question as well as an index that is associated with a flight condition: <code>Loop gain(:,:,2,2)</code> or <code>Actual(:,:,1,1)</code>. These are respectively, the Loop gain associated with the first 2nd altitude condition and the 2nd airspeed condition and the Actual step response associated with the 1st altitude condition and the 1st airspeed condition.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:514px; height:591px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/e36DJ2yBEi6v76VGL4p1tg?a=QBaAjc1Y2rwcqSJz6ca12HajPNDZAezlS4hNJN488iQa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAjxWKI' alt='' width='514' height='591' class='masked-image'></img></div></div><br/>
+
+ <br/>
+
+We can now start the process of extracting data by following some steps below:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:514px; height:591px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/JiDxEKone3bCo6xmt_Fthw?a=qOSa8txOjAzamayoZ4ssO7Jh4TDBDaOwWSr3Oxz6FuEa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAJRjGJ' alt='' width='514' height='591' class='masked-image'></img></div></div><br/>
+
+<br/>
+
+<br/>
+
+We can see that dataObjs is a cell array with each element containing a different array object. We are interested in the Graphics array elements because they contain the data.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:385px; height:272px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/j6uLtPfCmUq14BNu9rsFmA?a=JNh9df4jCDMuyZgCwAp7Wa7QUeaQPs5gdVnxip2TP3Ya' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAjSUwm' alt='' width='385' height='272' class='masked-image'></img></div></div><br/>
+
+Now we are specifically interested in the “Group” objects and not the Line objects. So for example, extracting the second element and going a layer deeper, using the following step:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:244px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/Vu6uPmg2WnDfVSqpnj2UTQ?a=ySlt7sx5rSRthnOjlCNDtkDCwwBsaHECHADQmA4aXy4a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACASXL1k' alt='' width='800' height='244' class='masked-image'></img></div></div>We see that the results include XData, YData and some other information. We can now extract the data as follows:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:200px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/-AX_KzMl2uZoUF3_B5s4iQ?a=YCOeaapl9PJBsdFNmedt2xnJiqaMKVw9s3pcV91u71Ya' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAh7kNd' alt='' width='800' height='200' class='masked-image'></img></div></div>Note that because there are a number of subplots, some of which have multiple curves, we might want to associate this curve with the Stability Margins Subplot. Therefore, when working through a script that is going through many of the curves and subplots, we may want a way to extract the name of the subplot:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:256px; height:69px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/lpsdKtCf8Y2GYUAfsRsgRg?a=4wlTJ5AbIw1Or9pAnegGi1CJa80rax9N2Hq6XYbQn8sa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACACxmhO' alt='' width='256' height='69' class='masked-image'></img></div></div><br/>
+
+Further, since the Stability Margins subplot is actually made up of two of its own subplots, we might want to distinguish them. In this case they are distinguished by their Y-axes.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:328px; height:81px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/D0kOVQeGloOnkjc-8JTtpA?a=0kYhEgrUUXdhx8H3rpIF2rSR1uoo2wa2LG7F7GJrUcIa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAp86dC' alt='' width='328' height='81' class='masked-image'></img></div></div><br/>
+
+We might want to explore another subplot that contains multiple curves. The 10th dataObjs element contains the information relating to the top subplot which has a number of curves.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:354px; height:318px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/niuLXBLhUE92EGOB1hNoQQ?a=A4U4L5scKvVtwk9I1XaB9ykHy3okfdWTnFfwC04kdqsa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAjKAai' alt='' width='354' height='318' class='masked-image'></img></div></div><br/>
+
+Note that the “Groups” are broken down into the categories laid out on the legend. Let’s look at the “Loop gain(s)” group:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:289px; height:227px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/cMPJKTQObEZBGFAKsTcrAQ?a=4vGtOrcY22nsjkyTCUHpga7IXWNxsSmOxOaQdEOIVIMa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAPu81O' alt='' width='289' height='227' class='masked-image'></img></div></div><br/>
+
+Observe that “Children” now is a 4X1 Line array. Because there are multiple Loop gain lines in this subplot, there are multiple Children. Be careful. Sometimes, there will be extra objects in the array that contain no data and these will have to be filtered out using conditionals in the code.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:606px; height:204px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/8CDlwPbjyWn4BF9vRXnagg?a=97Ct4Fwr55AN1SkK6W3LsvGRDy1o5nK2xXenQMikmlEa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA5N1EY' alt='' width='606' height='204' class='masked-image'></img></div></div><br/>
+
+This can be done for any element in Children. See GenerateLineStructs.m for a script that extracts and categorizes data in one of these ViewSpec curves. Note that because the ViewSpec plots we have produced thus far do not include every possible tuning goal, this script is only written for extracting from Frequency Shaping plot with Loop Gain, the Step Response/Tracking plot and Stability Margins. Other tuning goals can be added to the conditionals in the script and categories can be added to the output. The data structures appear to be extracted in reverse order from top to bottom and can be reordered and then reshaped into an array of data structures, with each element in the array containing data corresponding to the index that represents its respective flight condition.<br/>
+
+<br/>
+
+<h1 id='JfRACAEu2qH'>Classical Control Laws Design; Other Goals and Requirements</h1>
+
+Main goals is to use aircrafts flight dynamics to arrive at the following standard methods:<br/>
+
+<div data-section-style='6'><ul id='JfRACAWFVNE'><li id='JfRACAqA46n' class='' value='1'>Methods to enable systematic placement of sensors and servos on (long wingspan) HALE aircrafts based on rigid/flexible modes ,
+
+<br/></li><li id='JfRACAX2qUd' class=''>Methods to recommend control law structure based on flexible modes (shapes) of HALE aircrafts,
+
+<br/></li><li id='JfRACAjXmiN' class=''>Flexible mode Control (near the flutter bounadry, or any problematic elastic mode causing Limit Cycle Oscillations). 
+
+<br/></li><li id='JfRACA9I5FO' class=''>One control architecture called “distributed sensing and flexible mode control” to stabilize both the rigid body modes and flexible modes including the the Body-Freedom-Flutter (BFF).
+
+<br/></li><li id='JfRACAz3O8P' class=''>For flutter and/or elastic mode(s) control: what is the required servo bandwidth? What are the weight/reliability penalty of adding extra sensors/servos? 
+
+<br/></li><li id='JfRACALJ2Zb' class=''>A method to assess and evaluate the quality of the HALE airplane design from the aeroservoelasticity perspective from early stages of the design; as an example, consider having two different HALE airplane design for the same mission: one has conventional wing with one fuselage boom configuration, the other has an unconventional configuration consisting of a wing and three fuselage booms spread along the wing! Can we modify and use the control laws design tool to make such assessment? 
+
+<br/></li><li id='JfRACA01juv' class=''>Verification and validation at high altitudes (&gt;18km) considering effects of aeroservoelasticity,
+
+<br/></li><li id='JfRACAZNF4T' class=''>Verification and validation at low-mid altitudes considering effects of atmospheric disturbances.
+
+<br/></li><li id='JfRACALAvtr' class='parent'>in classical flight control systems design, the flight control laws are designed for decoupled longitudinal and lateral/directional flight dynamics model; Is it recommended for control laws design of HALE airplanes as well?
+
+<br/></li><ul><li id='JfRACAr2Y7S' class=''>That is true for transport aircraft, but sometimes not true for fighter aircraft. In that case the control laws may be adjusted for maneuvering flight conditions at high bank angle and/or sideslip. So it is usually true for aircraft that have the typically decoupled flight dynamics. for some flexible aircraft, however, there is a cross axes coupling due to asymmetric wing stiffness. So we had to make sure that the cross coupling did not cause flight-control issues. Since the cross coupling was not severe, the flight-control laws did not need revision.
+
+<br/></li></ul></ul></div><h2 id='JfRACAABuJt'></h2>
+
+<h1 id='JfRACAe1uu3'>Notes/requests for new features and additions to the tool:</h1>
+
+<div data-section-style='6'><ul id='JfRACAyqYgE'><li id='JfRACAJzx2z' class='' value='1'>Add a GUI and necessary code to facilitate graphical design method for control-law synthesis. Here one might utilize the Control Design tool in MATLAB's Control Design Toolbox.
+
+<br/></li><li id='JfRACAD1GFZ' class=''>bending stiffness (EJ) and torsion stiffness (GJ)
+
+<br/></li><li id='JfRACA6FciH' class=''>incorporating a precise load model into the control toolbox aircraft model for effective GLA controller design  
+
+<br/></li></ul></div><br/>
+
+<br/>
+
+<br/>
+
+<h2 id='JfRACAZUTlL'>Appendix A: ASWING Frequency Response Data Generation</h2>
+
+The current method for transferring an ASWING flexible aircraft model to Matlab for use in the Control Law Design Toolbox involves exporting frequency data from ASWING and using the Matlab system identification toolbox to create a state space model from the measured responses.  <br/>
+
+<h3 id='JfRACAcGXaC'>ASWING Source Modification and Compilation (Optional)</h3>
+
+By default, ASWING can export frequency data at 120 frequencies.  To improve the resolution of the exported frequency data, the following files must be modified:<br/>
+
+<div data-section-style='5'><ul id='JfRACADDlLJ'><li id='JfRACAO6tTe' class='' value='1'>DIMEN.INC - Set NRITZX = 500
+
+<br/></li><li id='JfRACA0Lu4L' class=''>EIGEN.INC - Set NEIGX = 500, NFREQX = 500
+
+<br/></li></ul></div>ASWING can then be recompiled using the command:<br/>
+
+<pre id='JfRACADQy6X'>gfortran *.f ARPACK/BLAS/*.f ARPACK/LAPACK/*.f ARPACK/SRC/*.f ARPACK/UTIL/*.f -z muldefs -fdollar-ok -std=legacy -mcmodel=medium -o aswing</pre>
+
+Make the resulting file executable for Mac and Linux with:<br/>
+
+<pre id='JfRACArKbYb'>chmod +x aswing</pre>
+
+Aswing can then be run using ./aswing<br/>
+
+<br/>
+
+Note that the -z muldefs command is required due to duplicate definitions in the aswing source, and is not available on Mac using the Darwin linker.  No work-around is currently known for this problem, as the corresponding Darwin -m option has been declared obsolete and is no longer functional.  Linux compilation works fine.  <br/>
+
+<h3 id='JfRACAfblY8'>Frequency Data Generation and Export</h3>
+
+Frequency data can be generated using the following example command sequence, which should be saved as Com.txt.  Note that the blank lines are part of the command sequence.<br/>
+
+The following lines should be modified to customize the script to user specs:<br/>
+
+<div data-section-style='5'><ul id='JfRACA2Sxxh'><li id='JfRACANR8IA' class='' value='1'>AF3.asw - ASWING aircraft model name
+
+<br/></li><li id='JfRACA2f0y2' class=''>SLF.pnt - Operating point
+
+<br/></li><li id='JfRACA2BYaV' class=''>!V 10 - Airspeed
+
+<br/></li><li id='JfRACAiERjB' class=''>A 0 9.81 - Altitude (km) and gravity
+
+<br/></li><li id='JfRACAL40EV' class=''>0.0015 1.6 500 - Start and end frequencies (Hz) and number of frequencies
+
+<br/></li><li id='JfRACAIbS6z' class=''>R_0_8.txt - Output filename
+
+<br/></li></ul></div><pre id='JfRACARgK6I'>load AF3.asw<br>pget<br>SLF.pnt<br><br>oper<br>!V 10 <br>A 0 9.81<br>X<br>P<br>S<br>19 20 21 39<br><br>7 0<br>8 0<br>9 0 <br>10 0<br>11 0<br>12 0<br>13 0<br>14 0<br>15 0<br>16 0<br>17 0<br>18 0<br><br>W trimstate.dat<br>O<br><br>R<br>%<br>F<br>19 19<br>20 20<br>21 21<br>22 22<br><br><br>mode<br>E<br>19 20 21 39<br><br><br>N<br>150<br><br>W<br>AF3.e00<br><br><br><br>mode<br>G<br>0<br><br>AF3.rom<br><br><br><br><br><br>bode<br>f<br>1 4<br>r<br>1 2 3 7 8 9 10 11 12 13 14 15 16 17 18 66 67 68<br><br>0 -1<br><br>n<br>0.0015 1.6 500<br>W<br>R_0_10.txt<br><br>Q</pre>
+
+Run the script by navigating to the folder containing the aswing executable and running the command<br/>
+
+<pre id='JfRACA72pdb'>./aswing&lt;Com.txt</pre>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:592px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/vGcvyn10Aeba7qi2yyHJdA?a=mneP0jHaZ1HFs6x9PC929t9ZkepikK7Wv8PeunJrevMa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAzGMdw' alt='' width='800' height='592' class='masked-image'></img></div></div><br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:800px; height:650px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/OjHoRiQhU-3qFKYGPOhmjA?a=jVWs3DCeBmiMoqNj4MG0iU5jOg9u1PSnR6gAIrKhkIIa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACASYjix' alt='' width='800' height='649' class='masked-image'></img></div></div><br/>
+
+<h2 id='JfRACARx8zj'>Appendix B: Complex State Space Conversion</h2>
+
+Simulink does not accept complex LTI systems, and the ROM exported from ASWING may be complex valued.  The complex system may be converted to a real system as follows:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:720px; height:405px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/OE7jtNh7vOgLRu4ZkkYvTA?a=qFj98XoauRYlo4Jx1WEwTzFNvWe76JjaAJsr7DhJgiYa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACABgSNK' alt='' width='720' height='405' class='masked-image'></img></div></div>This transformation may be performed using the included LTI_Complex2Real.m function.<br/>
+
+<h2 id='JfRACAToQQC'>Appendix C: ASWING Model Transformation</h2>
+
+Several modifications to the imported linear system from ASWING are necessary for the model to fit into the control laws toolbox.  These fall into three categories<br/>
+
+<div data-section-style='5'><ul id='JfRACASFv4c'><li id='JfRACAqtZxt' class='' value='1'>Input/Output Reordering
+
+<br/></li><li id='JfRACAoh19W' class=''>Unit Conversion/Scaling
+
+<br/></li><li id='JfRACAHiKjF' class=''>Coordinate System Transformation
+
+<br/></li></ul></div>The inputs of the ROM must be re-orderd to match the Claws order, which is Elevator, Aileron, Throttle, Differential Throttle (Rudder), Spoiler, and Vertical Gust.  The elevator and aileron commands must be converted to degrees.  Throttle is converted from normalized -1 to 1 to -10 N to 10 N by including a gain of 10.  Rudder is multipled by 15 to go from normalized -1 to 1 to +- 15 degrees.  Spoiler and Gust are currently zeroed out for the custom model.<br/>
+
+<br/>
+
+The outputs of the ROM system are re-ordered and scaled according to this:<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:486px; height:475px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/j7zp3w1OsG3Vv9skFVdXHQ?a=y5aY4756kSHmCctbY2vBe7FJaXc4K88FdWGHlB2eRp4a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA3QWod' alt='' width='486' height='475' class='masked-image'></img></div></div><br/>
+
+Phi, Theta, Psi, Wx, Wy, Wz, alpha, and beta are converted from degrees to radians.  V is output as is, but EAS must also be calculated.  This is done by calculating the EAS ratio of sqrt(rho/rho_0), and multiplying V by the EAS ratio to create an EAS output.<br/>
+
+<br/>
+
+The RX, RY, RZ, and Psi channels output from Aswing are incorrect.  These are corrected by integrating the velocity and Wz output channels, and augmenting the ROM with the corrected states.  Extra zeros must also be added to account for the extra states, and appropriate changes made to the A,B,C,D matrices.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:667px; height:500px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/ydLQjAVNH1JMhBmsDftXNw?a=rXyBfeTR0w2pEa9sY0K3OGVvSh78o0elUoCEnzrY0nMa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAjc9s5' alt='' width='667' height='500' class='masked-image'></img></div></div><br/>
+
+<br/>
+
+The coordinate system of the model must be changed to match the Claws tool.  This is done by reflecting all variables in the x and z axis.<br/>
+
+<div data-section-style='19'><div class='image-mask' style='width:728px; height:393px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/4N7Lnqt1CjfcUWRPs7qSaw?a=owtYel2amlpEcqy8PvSn2RlosQe0OfMpDJP5kIqKYcMa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACABstPv' alt='' width='728' height='393' class='masked-image'></img></div></div>All of the above transformations are included in the file sysTransform.m, and are performed automatically during model import.<br/>
+
+</body></html>

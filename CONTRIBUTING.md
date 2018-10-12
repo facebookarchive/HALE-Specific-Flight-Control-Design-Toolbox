@@ -1,4 +1,4 @@
-# Contributing to FBHALEControl
+# Contributing to HALE-Specific-Flight-Control-Design-Toolbox
 We want to make contributing to this project as easy and transparent as
 possible.
 
@@ -32,5 +32,5 @@ outlined on that page and do not file a public issue.
 * Units not included in variable format (all metric units except where noted)
 
 ## License
-By contributing to FBHALEControl, you agree that your contributions will be licensed
+By contributing to HALE-Specific-Flight-Control-Design-Toolbox, you agree that your contributions will be licensed
 under the LICENSE file in the root directory of this source tree.
