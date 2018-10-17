@@ -21,13 +21,7 @@ clc
 
 TRUE  = 1;
 FALSE = 0 ; 
-%Get the username of the user 
-user_name = char(java.lang.System.getProperty('user.name'));
 
-%set the path to the Aquila design folder -
-Aquila_design_folder = 'Documents/aquila/control_folder' ;
-
-main_folder=fullfile('/Users',user_name,Aquila_design_folder,'Aquila_Claws_Design_Cascaded');
-addpath(genpath(main_folder));
+addpath(genpath('..'));
 
 AquilaDiscreteModelParameters;
