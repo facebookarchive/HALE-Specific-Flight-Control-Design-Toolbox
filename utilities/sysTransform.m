@@ -49,8 +49,8 @@ function sys_new = sysTransform(sys,height)
     C_new([1,8,10,11,13,14,16],:) = -(C_new([1,8,10,11,13,14,16],:)); % Reflect ASWING x,z axis
     % RX,Wx,Wz,UX,UZ,ax,az, - RZ-> pres_alt
     % EAS Conversion
-    [~, ~, ~, rho_0] = atmosisa(0);
-    [~, ~, ~, rho] = atmosisa(height);
+    [rho_0,~,~,~,~,~] = atmos(0);
+    [rho,~,~,~,~,~] = atmos(height);
     EAS_ratio = sqrt(rho/rho_0);
     C_new(20,:) = C_new(20,:)*EAS_ratio;  % TAS to EAS
     
