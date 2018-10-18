@@ -391,9 +391,9 @@ The control laws design toolbox was developed to assist HALE aircraft's autopilo
 
 <div data-section-style='6'><ul id='JfRACAVbp98'><li id='JfRACAcPsMB' class='' value='1'>Module 1 is to build and prepare the aircraft model and to save it into a *.mat file for further analysis - the main script to run is “getAquilaModel_ModelGeneration.m”. The script will then generate a .mat file containing the aircraft model information which serves as input to the Module 2 script (see below). The .mat file name must also be provided for the Module 3 in the “OptConfigSetup.m” script.
 
-<br/></li><li id='JfRACACWXRN' class=''>Module 2 is for open loop flight dynamic analysis, stability and sensitivity analysis over the speed and altitude nominal range, sensor/servo location determination and for preliminary control laws structure determination (especially for the problematic flexible modes at higher altitudes) - the main script to run is “AquilaFltDynAnalysis.m”.  
+<br/></li><li id='JfRACACWXRN' class=''>Module 2 is for open loop flight dynamic analysis, stability and sensitivity analysis over the speed and altitude nominal range, sensor/servo location determination and for preliminary control laws structure determination (especially for the problematic flexible modes at higher altitudes) - the main script to run is “AquilaFltDynAnalysis.m” 
 
-<br/></li><li id='JfRACAKb4Ua' class=''>Module 3 is for control laws gain and parameters tuning over the designated flight envelop - the main script to run is “OptimiseAquilaClaws_Main.m”.
+<br/></li><li id='JfRACAKb4Ua' class=''>Module 3 is for control laws gain and parameters tuning over the designated flight envelop - the main script to run is “OptimiseAquilaClaws_Main.m” located under .../Aquila_Claws_Design_Cascaded/Utilities folder. see the details at section “Detailed Operation and Execution” under the Module 3 chapter.
 
 <br/></li></ul></div><div data-section-style='19'><div class='image-mask' style='width:800px; height:313px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/KPHSx0liu-QqZQwDkXW4xw?a=KqwBxXa8Zie7HCN9eemTD9eHmkWlRdPmoTLlwbaWvO8a' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACAt9lj6' alt='' width='800' height='313' class='masked-image'></img></div></div><br/>
 
@@ -913,7 +913,7 @@ Module 3 has 2 sections for the flight control system design, the first section 
 
 <br/>
 
-Module 3 is for control laws gain and parameters tuning over the designated flight envelop - the main script to run is “OptimiseAquilaClaws_Main.m”. The autopilot Control laws (Claws) is predefined in the corresponding Simulink model (LinLongNormal_Aquila_Claws_Discrete) and usually consisted of longitudinal and lateral/directional channels. The claws in longitudinal channel consist of the following loops:<br/>
+Module 3 is for control laws gain and parameters tuning over the designated flight envelop - the <i>main script to run</i> is “OptimiseAquilaClaws_Main.m”. The autopilot Control laws (Claws) is predefined in the corresponding Simulink model (LinLongNormal_Aquila_Claws_Discrete) and usually consisted of longitudinal and lateral/directional channels. The claws in longitudinal channel consist of the following loops:<br/>
 
 <div data-section-style='5'><ul id='JfRACAzAYr7'><li id='JfRACA7Fqn0' class='' value='1'>Pitch loop (PitchLoop)
 
@@ -1123,7 +1123,7 @@ Note that during the import, a second simulink model “linearModel.slx” is a
 
 <h2 id='JfRACAkvJAY'>Detailed Operation and Execution</h2>
 
-There are a number of pertinent files within the toolbox utility folder which must be set up first. The first file to modify is “OptimiseAquilaClaws_Main.m” — The script starts with a call to an initialization script “OptimiseAquilaClaws_init” which provides preliminary initialization for the Simulink model parameters and coefficients as well as sets the path.<br/>
+The design scripts and associated Simulink models are organized seperately in two folders “u<i>tilities” </i>and<i> “models</i>”, respectively.  Both folders are located in a parent folder called “H<i>ALE-Specific-Flight-Control-Design-Toolbox” </i>(replace the dashs by underscores if running on the linux machines). There are a number of pertinent files within the toolbox “<i>utilities”</i> folder which must be set up first. The first file to modify is “OptimiseAquilaClaws_Main.m” — The script starts with a call to an initialization script “OptimiseAquilaClaws_init.m” which sets the path to the parent folder. It also calls the “AquilaDiscreteModelParameters.m” script for the preliminary initialization of the simulink models.<br/>
 
 <div data-section-style='19'><div class='image-mask' style='width:700px; height:270px; border-radius: 0.000px'><img src='https://quip.com/blob/JfRAAASiGQO/gt5mze3Guj1lX_3gx0YvKA?a=CCscwRH56yhM3TL3tT4oaJAaYz4N8vPHOe8cht7aMAYa' style='transform: scale3d(1.000, 1.000, 1); -webkit-transform: scale3d(1.000, 1.000, 1); -ms-transform: scale3d(1.000, 1.000, 1); -moz-transform: scale3d(1.000, 1.000, 1)' id='JfRACA2lOqK' alt='' width='700' height='270' class='masked-image'></img></div></div><br/>
 
