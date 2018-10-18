@@ -6,7 +6,9 @@ The HALE flight control laws design toolbox was developed to assist HALE aircraf
 
 1. **Module 1** is to build and prepare the aircraft model and to save it into a .mat file for further analysis. To use Module 1 run **“utilities/getAquilaModel_ModelGeneration.m”**. The script will then generate a .mat file containing the aircraft model information which serves as the input to the Module 2 script (see below). The .mat file name must also be provided for the Module 3 in the “OptConfigSetup.m” script.
 2. **Module 2** is for open loop flight dynamic analysis, stability and sensitivity analysis over the speed and altitude nominal range, sensor/servo location determination and for preliminary control laws structure determination (especially for the problematic flexible modes at higher altitudes). To use Module 2 run **“utilities/AquilaFltDynAnalysis.m”**.
-3. **Module 3** is for control laws gain and parameters tuning over the designated flight envelop. The main script for Module 3 is **“utilities/OptimiseAquilaClaws_Main.m”**.
+3. **Module 3** is for control laws gain and parameters tuning over the designated flight envelop. The main script for Module 3 is **“utilities/OptimiseAquilaClaws_Main.m”**. Please see the "Detailed Operation and Execution" section of the Module 3 description chapter for the details.
+
+
 
 ## References
 Check out the Facebook research website, https://research.fb.com/category/connectivity/ .  The following conference paper were prepared with this toolbox:
@@ -14,8 +16,7 @@ Check out the Facebook research website, https://research.fb.com/category/connec
 
 ## Requirements
 This project was developed under Matlab/Simulink version 2017A.  It requires the following toolboxes:
-* Aerospace Blockset
-* Aerospace Toolbox
+* Aerospace Blockset (replace the "Rad to Deg" unit converters of the simulink models by R2D regular angle unit conversion blocks to remove the dependencies on this toolbox)
 * Control Systems Toolbox
 * Simulink
 * Parallel Computing Toolbox (optional): Optimization can be very slow, so it is beneficial to install and run on a server with many cores, taking advantage of parallelization
@@ -26,7 +27,7 @@ This project was developed under Matlab/Simulink version 2017A.  It requires the
 -
 
 ## Examples
-- Set the UseCustomModel flag to 1 in "utilities/OptimizeAquilaClaws_Discrete_GS.m" and follow the steps to design the preliminary flight control laws for a HALE aircraft (ASWING model)  .
+- Set the UseCustomModel flag to 1 in "utilities/OptimizeAquilaClaws_Discrete_GS.m" and follow the steps to design the preliminary flight control laws for a HALE aircraft (an ASWING ROM model) model provided. Using the sample model, the control design process can be exercised on the toolbox.
 
 ## Join the HALE-Specific-Flight-Control-Design-Toolbox community
 See the CONTRIBUTING file for how to help out.

@@ -22,6 +22,7 @@ clc
 TRUE  = 1;
 FALSE = 0 ; 
 
+% Set the path to the parent folder containing the utilities and model folders
 addpath(genpath('..'));
 
 AquilaDiscreteModelParameters;
