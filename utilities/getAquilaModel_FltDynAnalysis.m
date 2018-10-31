@@ -1,3 +1,18 @@
+%   Copyright (C) 2018-present, Facebook, Inc.
+% 
+%   This program is free software; you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation; version 2 of the License.
+% 
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+% 
+%   You should have received a copy of the GNU General Public License along
+%   with this program; if not, write to the Free Software Foundation, Inc.,
+%   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+%
 %	PURPOSE:            1. Analysis of open loop flight dynamics of High Altitude Long Endurance (HALE) very flexible airplanes 
 %                       
 %
@@ -8,10 +23,6 @@
 %                       4. for a general airplane model structure other than Aquila, an option to only provide the airplane
 %                       linearzied state space matrices at different flight conditions
 %                       
-%                     
-%                       
-%
-% 
 % 
 % 	OUTPUTS:            1. The aircraft trim condition, location of the sensors and servos including motors, and other geomteric configuration parameters required for flight control laws design
 %                       2. Aquila_OL_Model.mat data containing the aircraft state space matrices expressed at the determined sensor location at a given flight condition 
@@ -29,7 +40,7 @@
 %	LIMITATIONS:		Currently many
 %
 %
-%	DEVELOPER :			
+%	DEVELOPER :		    H. Bolandhemmat	
 %
 %
 %>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
